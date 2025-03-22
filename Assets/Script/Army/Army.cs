@@ -8,15 +8,22 @@ public class Army : MonoBehaviour
 
     protected int strength;
 
+    protected float velocity;
+
     //用于控制军队人数
-    protected void PeopleControl(int num)
+    public void PeopleControl(int num)
     {
         people += num;
     }
 
     //用于控制军队实力
-    protected void StrengthControl(int num)
+    public void StrengthControl(int num)
     {
         strength += num;
+    }
+
+    public void VelocityControl(float num)
+    {
+        velocity += num;
     }
 }
