@@ -87,11 +87,8 @@ public class IntegrateArmy : MonoBehaviour
                     {
                         selectedArmy = hit.transform.gameObject;
                         thisArmy.GetComponent<MoveToOthers>().Move(selectedArmy.transform);
-                        selectedArmy.GetComponent<MoveToOthers>().Move(thisArmy.transform);
-                        yield return new WaitUntil(() => !thisArmy.GetComponent<MoveToOthers>().CanMove || !selectedArmy.GetComponent<MoveToOthers>().CanMove);
-                        thisArmy.GetComponent<MoveToOthers>().CanMove = false;
-                        selectedArmy.GetComponent<MoveToOthers>().CanMove = false;
-                        thisArmy.GetComponent<Army>().people += selectedArmy.GetComponent<Army>().people;
+                        yield return new WaitUntil(() => !thisArmy.GetComponent<MoveToOthers>().CanMove);
+                        thisArmy.GetComponent<Army>().ArmyDetail["people"] += selectedArmy.GetComponent<Army>().ArmyDetail["people"];
                         Destroy(selectedArmy);
                         SelectArmy.Instance.canSelect = true;
                     }

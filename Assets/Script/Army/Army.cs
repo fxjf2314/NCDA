@@ -4,24 +4,40 @@ using UnityEngine;
 
 public class Army : MonoBehaviour
 {
-    public int people;
-    public int strength;
 
-    //用于控制军队人数
-    public void PeopleControl(int num)
+    public Dictionary<string, float> ArmyDetail = new Dictionary<string, float>
     {
-        people += num;
-        if(people == 0)
+        {"people",0 },
+        { "strenth",0},
+        { "velocity",0}
+
+    };
+    
+    //用于控制军队人数
+    public void PeopleControl(float num)
+    {
+        ArmyDetail["people"] += num;
+        if(ArmyDetail["people"] == 0)
             Destroy(gameObject);
     }
 
     //用于控制军队实力
-    public void StrengthControl(int num)
+    public void StrengthControl(float num)
     {
-        strength += num;
+        ArmyDetail["strenth"] += num;
     }
     public void BeAttacked(int num,int extraNum)
     {
         PeopleControl(-num - extraNum);
     }
+
+    public void VelocityControl(float num)
+    {
+        ArmyDetail["velocity"] += num;
+    }
+
+    /*public IEnumerator SlowControl(float duration,)
+    {
+        yield return new WaitForSeconds(strength);
+    }*/
 }

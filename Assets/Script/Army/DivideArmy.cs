@@ -19,7 +19,7 @@ public class DivideArmy : MonoBehaviour
     private void Start()
     {
         valueText= slider.gameObject.transform.Find("Handle Slide Area/Handle/Text").GetComponent<TextMeshProUGUI>();
-        UpdateValueText();
+        //UpdateValueText();
         slider.onValueChanged.AddListener(OnSliderValueChanged);
         fbYesButton.onClick.AddListener(DivideTheArmy);
     }
@@ -36,7 +36,7 @@ public class DivideArmy : MonoBehaviour
     private void UpdateValueText()
     {
         thisArmy = SelectArmy.Instance.SelectedArmy;
-        valueText.text = (Convert.ToInt16(slider.value * thisArmy.GetComponent<Army>().people)).ToString(); 
+        valueText.text = (Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"])).ToString(); 
     }
     public void ResetHandle()
     {
@@ -50,6 +50,7 @@ public class DivideArmy : MonoBehaviour
     #endregion
     private void DivideTheArmy()
     {
+
         if (slider.value != 0 && slider.value != 1) 
         {
             SelectArmy.Instance.DeselectTheArmy();
@@ -59,58 +60,11 @@ public class DivideArmy : MonoBehaviour
             GameObject newArmy = GameObject.Instantiate(thisArmy, randomDirection, Quaternion.identity);
             //CopyScripts(thisArmy, newArmy);
             NavMeshAgent agent = newArmy.GetComponent<NavMeshAgent>();
-            newArmy.GetComponent<Army>().PeopleControl(Convert.ToInt16(slider.value * thisArmy.GetComponent<Army>().people - newArmy.GetComponent<Army>().people));
-            thisArmy.GetComponent<Army>().PeopleControl(-newArmy.GetComponent<Army>().people);
+            newArmy.GetComponent<MyArmy>().PeopleControl(Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"] - newArmy.GetComponent<MyArmy>().ArmyDetail["people"]));
+            thisArmy.GetComponent<MyArmy>().PeopleControl(-newArmy.GetComponent<MyArmy>().ArmyDetail["people"]);
+            ArmyManager.MyInstance.allArmies.Add(newArmy);
+            ArmyManager.MyInstance.otherArmies.Add(newArmy);
         }
     }
-    //#region 复制脚本
-    //void CopyScripts(GameObject oldObject, GameObject newObject)
-    //{
-    //    // 获取旧物体上的所有 MonoBehaviour 脚本
-    //    MonoBehaviour[] oldScripts = oldObject.GetComponents<MonoBehaviour>();
-
-    //    // 遍历旧物体上的每个脚本
-    //    foreach (MonoBehaviour oldScript in oldScripts)
-    //    {
-    //        // 获取脚本的类型
-    //        System.Type scriptType = oldScript.GetType();
-
-    //        // 在新物体上添加相同类型的脚本
-    //        MonoBehaviour newScript = newObject.AddComponent(scriptType) as MonoBehaviour;
-
-    //        // 复制旧脚本的属性到新脚本
-    //        System.Reflection.PropertyInfo[] properties = scriptType.GetProperties();
-    //        foreach (System.Reflection.PropertyInfo property in properties)
-    //        {
-    //            if (property.CanRead && property.CanWrite)
-    //            {
-    //                try
-    //                {
-    //                    object value = property.GetValue(oldScript, null);
-    //                    property.SetValue(newScript, value, null);
-    //                }
-    //                catch
-    //                {
-    //                    // 忽略无法复制的属性
-    //                }
-    //            }
-    //        }
-
-    //        // 复制旧脚本的字段到新脚本
-    //        System.Reflection.FieldInfo[] fields = scriptType.GetFields();
-    //        foreach (System.Reflection.FieldInfo field in fields)
-    //        {
-    //            try
-    //            {
-    //                object value = field.GetValue(oldScript);
-    //                field.SetValue(newScript, value);
-    //            }
-    //            catch
-    //            {
-    //                // 忽略无法复制的字段
-    //            }
-    //        }
-    //    }
-    //}
-    //#endregion
+    
 }

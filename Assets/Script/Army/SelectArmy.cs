@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,11 +12,20 @@ public class SelectArmy : MonoBehaviour
 {
     [SerializeField]
     private GameObject armyPanel;
+    [SerializeField]
+    private int ambushStrength;
     private GameObject selectedArmy;
     public bool canSelect = true;
+
+    public GameObject attackPanel;
+    private Button aYesButton;
+    private Button aNoButton;
+
+    bool feignAttack = false;
+
     private static SelectArmy instance;
     public GameObject SelectedArmy { get => selectedArmy; set => selectedArmy = value; }
-    #region µ•¿˝
+    #region ÔøΩÔøΩÔøΩÔøΩ
     public static SelectArmy Instance
     {
         get
@@ -46,36 +57,136 @@ public class SelectArmy : MonoBehaviour
         }
     }
     #endregion
+
+    private void Start()
+    {
+        aYesButton = attackPanel.transform.Find("YesButton").GetComponent<Button>();
+        aNoButton = attackPanel.transform.Find("NoButton").GetComponent<Button>();
+        //aNoButton.onClick.AddListener(transform.GetComponent<ArmyMovement>().CancelMove);
+    }
     void LateUpdate()
     {
-        if (canSelect&&Input.GetMouseButtonDown(0))
+        Select();
+    }
+
+    public void Select()
+    {
+        if (CardManager.MyInstance.isRadioOff)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit)&& !EventSystem.current.IsPointerOverGameObject())
+            if (canSelect && Input.GetMouseButtonDown(0) && !CardManager.MyInstance.isCardChosen)
             {
-                DeselectTheArmy();
-                if (hit.transform.gameObject.CompareTag("Player"))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
                 {
-                    Debug.Log("—°÷–ŒÔÃÂ£∫" + hit.transform.gameObject.name);
-                    SelectedArmy = hit.transform.gameObject;
-                    SelectAArmy();
+                    DeselectTheArmy();
+                    if (hit.transform.gameObject.CompareTag("Player"))
+                    {
+                        if (hit.transform.gameObject.GetComponent<MyArmy>().isCommission)
+                        {
+                            Debug.Log("—°ÔøΩÔøΩÔøΩÔøΩÔøΩÂ£∫" + hit.transform.gameObject.name);
+                            SelectedArmy = hit.transform.gameObject;
+                            SelectAArmy();
+                        }
+
+                    }
                 }
             }
         }
-        if (Input.GetMouseButtonDown(1))
+        else if(CardManager.MyInstance.isRadioExposed)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject()&&hit.transform.gameObject==selectedArmy)
+            if (canSelect && Input.GetMouseButtonDown(0))
             {
-                canSelect = true;
-                IntegrateArmy.Instance.SetButton(true);
-                DeselectTheArmy();
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                {
+                   
+                    if (hit.transform.gameObject.CompareTag("Player"))
+                    {
+                        //ÊîπÂèòÊïå‰∫∫Áä∂ÊÄÅ
+                        CardManager.MyInstance.isRadioExposed = false;
+                    }
+                }
+            }
+        }
+        else if (CardManager.MyInstance.isAmBush)
+        {
+            if (canSelect && Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                {
+
+                    if (hit.transform.gameObject.CompareTag("Player"))
+                    {
+                        hit.transform.gameObject.GetComponent<MyArmy>().StrengthControl(ambushStrength);
+                        
+                    }
+                }
+            }
+        }
+        else if (CardManager.MyInstance.isFeignAttack)
+        {
+            if (canSelect && Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                {
+
+                    if (hit.transform.gameObject.CompareTag("Player"))
+                    {
+                        if (hit.transform.gameObject.GetComponent<MyArmy>().ArmyDetail["people"] <= 2000)
+                        {
+                            Debug.Log("ÈÄâ‰∏≠‰∫Ü");
+                            //GameObject role = hit.transform.gameObject;//roleÔøΩ«µÔøΩÔøΩÔøΩƒΩÔøΩÔøΩÔøΩÔøΩπ•µÔøΩÔøΩ“∑ÔøΩƒøÔøΩÔøΩ
+                            if(feignAttack)
+                            {
+                                StopCoroutine(WaitForChooseTarget(hit));
+                                feignAttack = false;
+                            }
+                            StartCoroutine(WaitForChooseTarget(hit));
+                        }
+
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (canSelect && Input.GetMouseButtonDown(0) && !CardManager.MyInstance.isCardChosen)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                {
+                    if (!EventSystem.current.IsPointerOverGameObject())
+                        DeselectTheArmy();
+                    if (hit.transform.gameObject.CompareTag("Player"))
+                    {
+                        //Debug.Log("—°ÔøΩÔøΩÔøΩÔøΩÔøΩÂ£∫" + hit.transform.gameObject.name);
+                        SelectedArmy = hit.transform.gameObject;
+                        SelectAArmy();
+                    }
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject() && hit.transform.gameObject == selectedArmy)
+                {
+                    canSelect = true;
+                    IntegrateArmy.Instance.SetButton(true);
+                    DeselectTheArmy();
+                }
             }
         }
     }
-    #region —°‘Òœ‡πÿ
+
+    #region —°ÔøΩÔøΩÔøΩÔøΩÔøΩ
     public void DeselectTheArmy()
     {
         SetArmy(false);
@@ -94,4 +205,85 @@ public class SelectArmy : MonoBehaviour
         }
     }
     #endregion
+
+    #region  πÔøΩÔøΩ’ΩÔøΩÔøΩÔøΩÔøΩÔøΩ
+    private void SelectTarget(RaycastHit a)
+    {
+        if (Input.GetMouseButtonDown(0)) // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
+        {
+            Action action;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit) && !hit.transform.gameObject.CompareTag("Player") && !EventSystem.current.IsPointerOverGameObject()) // ÔøΩÔøΩÔøΩÔøΩÔøΩŒªÔøΩÔøΩ
+            {
+                switch (hit.transform.gameObject.tag)
+                {
+                    case "Army":
+                        aYesButton.onClick.AddListener(() => a.transform.GetComponent<Collider>().GetComponent<MoveToOthers>().Move(hit.transform));
+                        action = () =>
+                        {
+                            attackPanel.SetActive(true);
+                        };
+                        break;
+                    case "Town":
+                        aYesButton.onClick.AddListener(transform.GetComponent<ArmyMovement>().ArmyMove);
+                        action = () =>
+                        {
+                            attackPanel.SetActive(true);
+                        };
+                        break;
+                    default:
+                        
+                        break;
+
+                }
+                
+            }
+        }
+    }
+    
+    private IEnumerator WaitForChooseTarget(RaycastHit a)
+    {
+        feignAttack = true;
+        while (true)
+        {
+            if (Input.GetMouseButtonDown(0)) // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
+            {
+                
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit) && !hit.transform.gameObject.CompareTag("Player") && !EventSystem.current.IsPointerOverGameObject()) // ÔøΩÔøΩÔøΩÔøΩÔøΩŒªÔøΩÔøΩ
+                {
+                    
+                    switch (hit.transform.gameObject.tag)
+                    {
+                        case "Army":
+                            aYesButton.onClick.AddListener(() => a.transform.GetComponent<Collider>().GetComponent<MoveToOthers>().Move(hit.transform));
+                            aYesButton.onClick.AddListener(() => FeignAttackChoose.MyInstance.CancelOrFinish());
+                            attackPanel.SetActive(true);
+                            
+                            break;
+                        case "Town":
+                            aYesButton.onClick.AddListener(()=> a.transform.GetComponent<Collider>().GetComponent<NavMeshAgent>().SetDestination(hit.transform.position)); 
+                            aYesButton.onClick.AddListener(() => FeignAttackChoose.MyInstance.CancelOrFinish());
+                            attackPanel.SetActive(true);
+                            
+                            break;
+                        default:
+
+                            break;
+
+                    }
+
+                }
+
+            }
+            yield return null;
+        }
+    }
+    #endregion
 }
+
+

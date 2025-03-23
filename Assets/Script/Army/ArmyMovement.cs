@@ -122,12 +122,12 @@ public class ArmyMovement : MonoBehaviour
             }
         }
     }
-    private void ArmyMove()
+    public void ArmyMove()
     {
         if(canMove )
             agent.SetPath(path);
     }
-    private void CancelMove()
+    public void CancelMove()
     {
         canMove = false;
     }
