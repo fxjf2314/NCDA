@@ -14,6 +14,9 @@ public class EnemyArmy : Army
     [SerializeField]
     protected float minDis = 5;
 
+    [SerializeField]//军队血量上限
+    protected float limitedPeople;
+
     //附近城市
     List<Vector3> nearCitys = new List<Vector3>();
 
@@ -24,7 +27,7 @@ public class EnemyArmy : Army
     List<Army> playerArmy = new List<Army>();
     float playerAttack;
 
-    [SerializeField]
+    [SerializeField]//
     float checkRadio = 100;
     //#region 雷达模拟
     //[Header("模拟雷达")]
@@ -94,20 +97,14 @@ public class EnemyArmy : Army
     private float AttackPriority()
     {
         float priority;
-        priority = attack * (enemyAttack - playerAttack) * (speed - (playerArmy[0].GetSpeed() + playerArmy[1].GetSpeed())/2);
-        return priority;
-    }
-
-    private float DeffencePriority()
-    {
-        float priority;
-        priority = move * (500 - playerAttack);
+        priority = attack * (enemyAttack - playerAttack) * (ArmyDetail["velocity"] - (playerArmy[0].GetVelocity() + playerArmy[1].GetVelocity())/2);
         return priority;
     }
 
     protected void Healing()
     {
-
+        float priority;
+        priority = ((1 - ArmyDetail["people"]/limitedPeople) ) * 100 + +Vector3.Distance(playerArmy[0].transform.position, transform.position) % 100;
     }
 
     protected void MoveDirectly(Transform goal)

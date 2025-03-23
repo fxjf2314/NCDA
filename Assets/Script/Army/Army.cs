@@ -1,44 +1,54 @@
+using RotaryHeart.Lib.SerializableDictionary;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Army : MonoBehaviour
 {
-    protected int people;
-
-    protected int strength;
-
-    protected float speed;
-
-    //用于控制军队人数
-    protected void PeopleControl(int num)
+    [SerializeField]
+    SerializableDictionaryBase<string, float> dic = new SerializableDictionaryBase<string, float>();
+    public Dictionary<string, float> ArmyDetail = new Dictionary<string, float>
     {
-        people += num;
+        {"people",0 },
+        { "strenth",0},
+        { "velocity",0}
+    };
+    
+    //用于控制军队人数
+    public void PeopleControl(float num)
+    {
+        ArmyDetail["people"] += num;
     }
 
     //用于控制军队实力
-    protected void StrengthControl(int num)
+    public void StrengthControl(float num)
     {
-        strength += num;
+        ArmyDetail["strenth"] += num;
     }
 
-    protected void SpeedControl(float num)
+    public float GetPeople()
     {
-        speed += num;
+        return ArmyDetail["people"];
     }
 
-    public int GetPeople()
+    public float GetStrength()
     {
-        return people;
+        return ArmyDetail["strenth"];
     }
 
-    public int GetStrength()
+    public float GetVelocity()
     {
-        return strength;
+        return ArmyDetail["velocity"];
     }
 
-    public float GetSpeed()
+    public void VelocityControl(float num)
     {
-        return speed;
+        ArmyDetail["velocity"] += num;
     }
+
+    /*public IEnumerator SlowControl(float duration,)
+    {
+        yield return new WaitForSeconds(strength);
+    }*/
+
 }
