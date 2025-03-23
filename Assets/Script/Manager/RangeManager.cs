@@ -25,7 +25,7 @@ public class RangeManager : MonoBehaviour
         {
             //Debug.Log("player");
             other.transform.GetComponent<Outline>().enabled = true;
-            CardManager.MyInstance.armies.Add(other.transform.GetComponent<Army>());
+            CardManager.MyInstance.armies.Add(other.transform.GetComponent<MyArmy>());
         }
     }
 
@@ -33,7 +33,7 @@ public class RangeManager : MonoBehaviour
     {
         if (other.transform.gameObject.CompareTag("Player"))
         {
-            CardManager.MyInstance.armies.Remove(other.transform.GetComponent<Army>());
+            CardManager.MyInstance.armies.Remove(other.transform.GetComponent<MyArmy>());
             other.transform.GetComponent<Outline>().enabled = false;
 
         }

@@ -45,6 +45,10 @@ public class RadioOff :Card
                 applicableObject.GetComponent<Renderer>().material.color = Color.red;
             }
         }
+
+        CardManager.MyInstance.isRadioOff = true;
+
+        
         //无法选中其余军队，只能操纵军委纵队
     }
 }

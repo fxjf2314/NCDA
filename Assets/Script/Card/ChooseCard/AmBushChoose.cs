@@ -15,6 +15,7 @@ public class AmBushChoose : ChooseCard
         {
             if (isChoose)
             {
+                CardManager.MyInstance.isAmBush = false;
                 IsCardChosen();
                 isChoose = false;
                 StartCoroutine(MoveUI(-20));
@@ -29,6 +30,7 @@ public class AmBushChoose : ChooseCard
     {
         if (!isChoose && !CardManager.MyInstance.isCardChosen)
         {
+            CardManager.MyInstance.isAmBush = true;
             IsCardChosen();
             if (!isMoving)
             {
@@ -40,10 +42,7 @@ public class AmBushChoose : ChooseCard
             card.Choose();
 
         }
-        else if (isChoose)
-        {
-            //
-        }
+        
 
     }
 }

@@ -21,7 +21,14 @@ public class CardManager : MonoBehaviour
 
     public bool isCardChosen;
 
-    public List<Army> armies;
+    public List<MyArmy> armies;
 
+    public bool isRadioOff;
+
+    public bool isRadioExposed;
+
+    public bool isAmBush;
+
+    public bool isFeignAttack;
     
 }

@@ -5,6 +5,21 @@ using UnityEngine.EventSystems;
 
 public class FeignAttackChoose : ChooseCard
 {
+    private static FeignAttackChoose instance;
+
+    public static FeignAttackChoose MyInstance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<FeignAttackChoose>();
+            }
+            return instance;
+        }
+
+    }
+
     public override void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
@@ -13,14 +28,7 @@ public class FeignAttackChoose : ChooseCard
         }
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (isChoose)
-            {
-                IsCardChosen();
-                isChoose = false;
-                StartCoroutine(MoveUI(-20));
-                PlaneMaskOpenAndClose();
-                card.Hide();
-            }
+            CancelOrFinish();
 
         }
     }
@@ -29,6 +37,7 @@ public class FeignAttackChoose : ChooseCard
     {
         if (!isChoose && !CardManager.MyInstance.isCardChosen)
         {
+            CardManager.MyInstance.isFeignAttack = true;
             IsCardChosen();
             if (!isMoving)
             {
@@ -45,5 +54,18 @@ public class FeignAttackChoose : ChooseCard
             //
         }
 
+    }
+
+    public void CancelOrFinish()
+    {
+        if (isChoose)
+        {
+            CardManager.MyInstance.isFeignAttack = false;
+            IsCardChosen();
+            isChoose = false;
+            StartCoroutine(MoveUI(-20));
+            PlaneMaskOpenAndClose();
+            card.Hide();
+        }
     }
 }
