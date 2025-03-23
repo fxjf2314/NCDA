@@ -112,6 +112,7 @@ public class ArmyMovement : MonoBehaviour
                         }
                         action.Invoke();
                         canMove = true;
+                        moveToOthers.CanMove = false;
                     }
                     else
                     {
@@ -158,7 +159,11 @@ public class ArmyMovement : MonoBehaviour
             case 0: return "Walkable"; // 默认区域
             case 1: return "Not Walkable"; // 不可行走区域
             case 2: return "Jump"; // 跳跃区域
-            case 3: return "River";
+            case 3: return "平原";
+            case 4: return "河流";
+            case 5: return "隘口";
+            case 6: return "丘陵";
+            case 7: return "城镇";
             default: return "Unknown";
         }
     }

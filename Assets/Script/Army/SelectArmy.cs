@@ -54,8 +54,7 @@ public class SelectArmy : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)&& !EventSystem.current.IsPointerOverGameObject())
             {
-                if (!EventSystem.current.IsPointerOverGameObject())
-                    DeselectTheArmy();
+                DeselectTheArmy();
                 if (hit.transform.gameObject.CompareTag("Player"))
                 {
                     Debug.Log("选中物体：" + hit.transform.gameObject.name);
@@ -64,13 +63,24 @@ public class SelectArmy : MonoBehaviour
                 }
             }
         }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject()&&hit.transform.gameObject==selectedArmy)
+            {
+                canSelect = true;
+                IntegrateArmy.Instance.SetButton(true);
+                DeselectTheArmy();
+            }
+        }
     }
     #region 选择相关
     public void DeselectTheArmy()
     {
         SetArmy(false);
     }
-    private void SelectAArmy()
+    public void SelectAArmy()
     {
         SetArmy(true);
     }

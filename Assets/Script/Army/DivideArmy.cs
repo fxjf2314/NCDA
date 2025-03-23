@@ -23,6 +23,10 @@ public class DivideArmy : MonoBehaviour
         slider.onValueChanged.AddListener(OnSliderValueChanged);
         fbYesButton.onClick.AddListener(DivideTheArmy);
     }
+    private void OnEnable()
+    {
+        StartCoroutine(SetHandle());
+    }
     #region 滑条数值显示
     private void OnSliderValueChanged(float value)
     {
@@ -36,19 +40,28 @@ public class DivideArmy : MonoBehaviour
     }
     public void ResetHandle()
     {
+        StartCoroutine(SetHandle());
+    }
+    private IEnumerator SetHandle()
+    {
+        yield return null;
         slider.value = 0;
     }
     #endregion
     private void DivideTheArmy()
     {
-        thisArmy = SelectArmy.Instance.SelectedArmy;
-        Vector3 randomDirection = new Vector3(Random.Range(-0.1f, 0.1f), 0f, Random.Range(-0.1f, 0.1f)).normalized;
-        randomDirection = thisArmy.transform.position + randomDirection;
-        GameObject newArmy = GameObject.Instantiate(thisArmy, randomDirection, Quaternion.identity);
-        //CopyScripts(thisArmy, newArmy);
-        NavMeshAgent agent = newArmy.GetComponent<NavMeshAgent>();
-        newArmy.GetComponent<Army>().people =Convert.ToInt16(slider.value* thisArmy.GetComponent<Army>().people);
-        thisArmy.GetComponent<Army>().PeopleControl(- newArmy.GetComponent<Army>().people);
+        if (slider.value != 0 && slider.value != 1) 
+        {
+            SelectArmy.Instance.DeselectTheArmy();
+            thisArmy = SelectArmy.Instance.SelectedArmy;
+            Vector3 randomDirection = new Vector3(Random.Range(-0.1f, 0.1f), 0f, Random.Range(-0.1f, 0.1f)).normalized;
+            randomDirection = thisArmy.transform.position + randomDirection;
+            GameObject newArmy = GameObject.Instantiate(thisArmy, randomDirection, Quaternion.identity);
+            //CopyScripts(thisArmy, newArmy);
+            NavMeshAgent agent = newArmy.GetComponent<NavMeshAgent>();
+            newArmy.GetComponent<Army>().PeopleControl(Convert.ToInt16(slider.value * thisArmy.GetComponent<Army>().people - newArmy.GetComponent<Army>().people));
+            thisArmy.GetComponent<Army>().PeopleControl(-newArmy.GetComponent<Army>().people);
+        }
     }
     //#region 复制脚本
     //void CopyScripts(GameObject oldObject, GameObject newObject)

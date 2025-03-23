@@ -11,15 +11,15 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
+  - name: Plain
+    cost: 1
   - name: River
     cost: 1
-  - name: 
+  - name: Defile
     cost: 1
-  - name: 
+  - name: Hilly
     cost: 1
-  - name: 
-    cost: 1
-  - name: 
+  - name: Towns
     cost: 1
   - name: 
     cost: 1

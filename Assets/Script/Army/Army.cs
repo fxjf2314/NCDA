@@ -11,11 +11,17 @@ public class Army : MonoBehaviour
     public void PeopleControl(int num)
     {
         people += num;
+        if(people == 0)
+            Destroy(gameObject);
     }
 
     //用于控制军队实力
     public void StrengthControl(int num)
     {
         strength += num;
+    }
+    public void BeAttacked(int num,int extraNum)
+    {
+        PeopleControl(-num - extraNum);
     }
 }
