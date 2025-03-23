@@ -8,6 +8,8 @@ public class Army : MonoBehaviour
 
     protected int strength;
 
+    protected float speed;
+
     //用于控制军队人数
     protected void PeopleControl(int num)
     {
@@ -18,5 +20,25 @@ public class Army : MonoBehaviour
     protected void StrengthControl(int num)
     {
         strength += num;
+    }
+
+    protected void SpeedControl(float num)
+    {
+        speed += num;
+    }
+
+    public int GetPeople()
+    {
+        return people;
+    }
+
+    public int GetStrength()
+    {
+        return strength;
+    }
+
+    public float GetSpeed()
+    {
+        return speed;
     }
 }
