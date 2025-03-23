@@ -10,7 +10,13 @@ public class TerrainInteraction : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("进入"+GetTerrain(other));
+        lastTerrain = lastTerrain;
+        thisTerrain = GetTerrain(other);
+        Debug.Log("进入"+ thisTerrain);
+        switch (thisTerrain)
+        {
+            
+        }
     }
     private string GetTerrain(Collider other)
     {

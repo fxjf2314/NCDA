@@ -17,11 +17,9 @@ NavMeshProjectSettings:
     cost: 1
   - name: Defile
     cost: 1
-  - name: Hilly
+  - name: 'Hilly '
     cost: 1
-  - name: Towns
-    cost: 1
-  - name: 
+  - name: Town
     cost: 1
   - name: 
     cost: 1
@@ -69,7 +67,9 @@ NavMeshProjectSettings:
     cost: 1
   - name: 
     cost: 1
-  m_LastAgentTypeID: 1479372276
+  - name: 
+    cost: 1
+  m_LastAgentTypeID: -887442657
   m_Settings:
   - serializedVersion: 3
     agentTypeID: 0

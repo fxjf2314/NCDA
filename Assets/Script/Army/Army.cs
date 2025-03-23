@@ -1,18 +1,17 @@
+using RotaryHeart.Lib.SerializableDictionary;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Army : MonoBehaviour
 {
-
-    public Dictionary<string, float> ArmyDetail = new Dictionary<string, float>
+    public SerializableDictionaryBase<string, float> ArmyDetail = new SerializableDictionaryBase<string, float>
     {
         {"people",0 },
         { "strenth",0},
         { "velocity",0}
-
     };
-    
+
     //用于控制军队人数
     public void PeopleControl(float num)
     {
@@ -31,6 +30,21 @@ public class Army : MonoBehaviour
         PeopleControl(-num - extraNum);
     }
 
+    public float GetPeople()
+    {
+        return ArmyDetail["people"];
+    }
+
+    public float GetStrength()
+    {
+        return ArmyDetail["strenth"];
+    }
+
+    public float GetVelocity()
+    {
+        return ArmyDetail["velocity"];
+    }
+
     public void VelocityControl(float num)
     {
         ArmyDetail["velocity"] += num;
@@ -40,4 +54,5 @@ public class Army : MonoBehaviour
     {
         yield return new WaitForSeconds(strength);
     }*/
+
 }
