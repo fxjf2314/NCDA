@@ -121,8 +121,9 @@ public class SelectArmy : MonoBehaviour
 
                     if (hit.transform.gameObject.CompareTag("Player"))
                     {
-                        hit.transform.gameObject.GetComponent<MyArmy>().StrengthControl(ambushStrength);
-                        
+                        hit.transform.gameObject.GetComponent<MyArmy>().ControlResource(Time.deltaTime,"strength",ambushStrength,Time.deltaTime);
+                        //失去控制
+                        hit.transform.GetComponent<Detection>().
                     }
                 }
             }
@@ -207,42 +208,6 @@ public class SelectArmy : MonoBehaviour
     #endregion
 
     #region ʹ��ս�����
-    private void SelectTarget(RaycastHit a)
-    {
-        if (Input.GetMouseButtonDown(0)) // ��������
-        {
-            Action action;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit) && !hit.transform.gameObject.CompareTag("Player") && !EventSystem.current.IsPointerOverGameObject()) // �����λ��
-            {
-                switch (hit.transform.gameObject.tag)
-                {
-                    case "Army":
-                        aYesButton.onClick.AddListener(() => a.transform.GetComponent<Collider>().GetComponent<MoveToOthers>().Move(hit.transform));
-                        action = () =>
-                        {
-                            attackPanel.SetActive(true);
-                        };
-                        break;
-                    case "Town":
-                        aYesButton.onClick.AddListener(transform.GetComponent<ArmyMovement>().ArmyMove);
-                        action = () =>
-                        {
-                            attackPanel.SetActive(true);
-                        };
-                        break;
-                    default:
-                        
-                        break;
-
-                }
-                
-            }
-        }
-    }
-    
     private IEnumerator WaitForChooseTarget(RaycastHit a)
     {
         feignAttack = true;
@@ -283,6 +248,8 @@ public class SelectArmy : MonoBehaviour
             yield return null;
         }
     }
+
+
     #endregion
 }
 

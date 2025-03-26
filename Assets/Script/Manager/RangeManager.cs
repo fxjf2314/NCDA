@@ -61,7 +61,7 @@ public class RangeManager : MonoBehaviour
             {
                 foreach(Army army in CardManager.MyInstance.armies)
                 {
-                    army.VelocityControl(forcedMarchSpeed);
+                    army.ControlResource(Time.deltaTime,"velocity", forcedMarchSpeed, Time.deltaTime);
                     
                 }
                 ForcedMarchChoose.MyInstance.Hide();

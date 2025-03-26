@@ -19,7 +19,6 @@ public class DivideArmy : MonoBehaviour
     private void Start()
     {
         valueText= slider.gameObject.transform.Find("Handle Slide Area/Handle/Text").GetComponent<TextMeshProUGUI>();
-        //UpdateValueText();
         slider.onValueChanged.AddListener(OnSliderValueChanged);
         fbYesButton.onClick.AddListener(DivideTheArmy);
     }
@@ -60,11 +59,13 @@ public class DivideArmy : MonoBehaviour
             GameObject newArmy = GameObject.Instantiate(thisArmy, randomDirection, Quaternion.identity);
             //CopyScripts(thisArmy, newArmy);
             NavMeshAgent agent = newArmy.GetComponent<NavMeshAgent>();
-            newArmy.GetComponent<MyArmy>().PeopleControl(Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"] - newArmy.GetComponent<MyArmy>().ArmyDetail["people"]));
-            thisArmy.GetComponent<MyArmy>().PeopleControl(-newArmy.GetComponent<MyArmy>().ArmyDetail["people"]);
+            newArmy.GetComponent<MyArmy>().ArmyDetail["people"] = Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"]);
+            Debug.Log(Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"]));
+            thisArmy.GetComponent<MyArmy>().ControlResource(0.1f, "people", -newArmy.GetComponent<MyArmy>().ArmyDetail["people"], 0.1f);
             ArmyManager.MyInstance.allArmies.Add(newArmy);
             ArmyManager.MyInstance.otherArmies.Add(newArmy);
         }
+
     }
     
 }

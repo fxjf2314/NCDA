@@ -1,34 +1,24 @@
-using RotaryHeart.Lib.SerializableDictionary;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RotaryHeart.Lib.SerializableDictionary;
 
 public class Army : MonoBehaviour
 {
+
     public SerializableDictionaryBase<string, float> ArmyDetail = new SerializableDictionaryBase<string, float>
     {
         {"people",0 },
-        { "strenth",0},
+        { "strength",0},
         { "velocity",0}
     };
 
-    //用于控制军队人数
-    public void PeopleControl(float num)
-    {
-        ArmyDetail["people"] += num;
-        if(ArmyDetail["people"] == 0)
-            Destroy(gameObject);
-    }
+    
 
-    //用于控制军队实力
-    public void StrengthControl(float num)
-    {
-        ArmyDetail["strenth"] += num;
-    }
-    public void BeAttacked(int num,int extraNum)
-    {
-        PeopleControl(-num - extraNum);
-    }
+
+
+    float initNum;
+
 
     public float GetPeople()
     {
@@ -37,7 +27,7 @@ public class Army : MonoBehaviour
 
     public float GetStrength()
     {
-        return ArmyDetail["strenth"];
+        return ArmyDetail["strength"];
     }
 
     public float GetVelocity()
@@ -45,14 +35,27 @@ public class Army : MonoBehaviour
         return ArmyDetail["velocity"];
     }
 
-    public void VelocityControl(float num)
+    public void ControlResource(float duration, string name, float deltaNum, float intervalTime)
     {
-        ArmyDetail["velocity"] += num;
+        StartCoroutine(AllControl(duration, name, deltaNum, intervalTime));
     }
 
-    /*public IEnumerator SlowControl(float duration,)
+    private IEnumerator AllControl(float duration, string name, float deltaNum,float intervalTime)
     {
-        yield return new WaitForSeconds(strength);
-    }*/
+        initNum = ArmyDetail[name];
 
+        float elapsedTime = 0.0f;
+        float targetNum = initNum + deltaNum;
+
+        while (elapsedTime < duration)
+        {
+            ArmyDetail[name] = Mathf.Lerp(initNum, targetNum, elapsedTime / duration);
+            yield return new WaitForSeconds(intervalTime);
+            elapsedTime += intervalTime;
+            
+        }
+
+        ArmyDetail[name] = targetNum;
+
+    }
 }
