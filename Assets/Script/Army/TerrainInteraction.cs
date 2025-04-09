@@ -5,18 +5,56 @@ using UnityEngine;
 
 public class TerrainInteraction : MonoBehaviour
 {
+    private Army army;
     private string thisTerrain;
     private string lastTerrain;
+    [Header("平原")]
+    [SerializeField]
+    private float extraNum;//额外受攻击的数值
+    public float exNum;
+    [Header("河流")]
+    [SerializeField]
+    private float duration;
+    [SerializeField]
+    private float r_VReduction;
+    [SerializeField]
+    private float intervalTime;
+    [Header("丘陵")]
+    private float d_VReduction;
 
+
+    private void Start()
+    {
+        army=GetComponent<Army>();
+    }
     private void OnTriggerEnter(Collider other)
     {
-        lastTerrain = lastTerrain;
+        lastTerrain = thisTerrain;
         thisTerrain = GetTerrain(other);
         Debug.Log("进入"+ thisTerrain);
+        Reset();
         switch (thisTerrain)
         {
-            
+            case "平原":
+                exNum = extraNum;
+                break;
+            case "河流":
+                army.ControlResource(duration, "velocity", -r_VReduction, intervalTime);
+                break;
+            case "隘口":
+                
+                break;
+            case "丘陵":
+                army.ControlResource(0.1f, "velocity", d_VReduction, 0.1f);
+                break;
+            case "城镇":
+                break;
         }
+    }
+    private void Reset()
+    {
+        exNum = 0;
+        army.ControlResource(0.1f, "velocity", -d_VReduction, 0.1f);
     }
     private string GetTerrain(Collider other)
     {

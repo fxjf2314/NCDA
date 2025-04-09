@@ -123,7 +123,7 @@ public class SelectArmy : MonoBehaviour
                     {
                         hit.transform.gameObject.GetComponent<MyArmy>().ControlResource(Time.deltaTime,"strength",ambushStrength,Time.deltaTime);
                         //失去控制
-                        hit.transform.GetComponent<Detection>().
+                        //hit.transform.GetComponent<Detection>().
                     }
                 }
             }

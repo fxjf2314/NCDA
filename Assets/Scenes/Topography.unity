@@ -1700,6 +1700,7 @@ GameObject:
   - component: {fileID: 411107315}
   - component: {fileID: 411107314}
   - component: {fileID: 411107313}
+  - component: {fileID: 411107316}
   m_Layer: 5
   m_Name: BuFang
   m_TagString: Untagged
@@ -1771,9 +1772,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1027753076}
-        m_TargetAssemblyTypeName: SelectArmy, Assembly-CSharp
-        m_MethodName: DeselectTheArmy
+      - m_Target: {fileID: 1871763285}
+        m_TargetAssemblyTypeName: Halt, Assembly-CSharp
+        m_MethodName: TBD
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 411107316}
+        m_TargetAssemblyTypeName: LayOutADefense, Assembly-CSharp
+        m_MethodName: LayOut
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1821,6 +1834,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 411107311}
   m_CullTransparentMesh: 1
+--- !u!114 &411107316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411107311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f4694b37651654e9a142361235cd70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DdButton: {fileID: 1871763282}
+  FbButton: {fileID: 1513104200}
+  BfButton: {fileID: 411107313}
+  HbButton: {fileID: 1725594136}
+  duration: 2
+  strength: 1
 --- !u!1 &442033968
 GameObject:
   m_ObjectHideFlags: 0
@@ -3854,21 +3885,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ArmyDetail:
     reorderableList:
-      canAdd: 0
-      canRemove: 0
-      draggable: 0
-      expandable: 0
-      multipleSelection: 0
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
       isExpanded: 0
       label:
-        m_Text: 
+        m_Text: Keys
         m_Image: {fileID: 0}
         m_Tooltip: 
-      headerHeight: 0
-      footerHeight: 0
-      slideEasing: 0
-      verticalSpacing: 0
-      showDefaultBackground: 0
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
       elementDisplayType: 0
       elementNameProperty: 
       elementNameOverride: 
@@ -5777,7 +5808,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -6531,6 +6562,7 @@ GameObject:
   - component: {fileID: 1871763284}
   - component: {fileID: 1871763283}
   - component: {fileID: 1871763282}
+  - component: {fileID: 1871763285}
   m_Layer: 5
   m_Name: DaiDing
   m_TagString: Untagged
@@ -6614,6 +6646,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1871763285}
+        m_TargetAssemblyTypeName: Halt, Assembly-CSharp
+        m_MethodName: TBD
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1871763283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6652,6 +6696,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1871763280}
   m_CullTransparentMesh: 1
+--- !u!114 &1871763285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871763280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b46f6442187f064387811fa8bf04339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1963543324
 GameObject:
   m_ObjectHideFlags: 0
@@ -6672,6 +6728,7 @@ GameObject:
   - component: {fileID: 1963543334}
   - component: {fileID: 1963543336}
   - component: {fileID: 1963543337}
+  - component: {fileID: 1963543338}
   m_Layer: 6
   m_Name: Army
   m_TagString: Player
@@ -6899,11 +6956,11 @@ MonoBehaviour:
     isExpanded: 1
     _keyValues:
     - people
-    - strenth
+    - strength
     - velocity
     _keys:
     - people
-    - strenth
+    - strength
     - velocity
     _values:
     - 30000
@@ -6922,6 +6979,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b5da16237cae404db9c3ac995c14c28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  extraNum: 0
+  exNum: 0
+  duration: 0
+  r_VReduction: 0
+  intervalTime: 0
 --- !u!114 &1963543337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6934,6 +6996,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8563838e697c54c806923758a9aae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1963543338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963543324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b56d11120d634d74c8ca1e737b8a3eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isStill: 0
 --- !u!1001 &2031703871
 PrefabInstance:
   m_ObjectHideFlags: 0
