@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class MoveToOthers : MonoBehaviour
 {
     private NavMeshAgent agent;
+    [SerializeField]
     private bool canMove;
     private Transform target;
 
@@ -32,7 +33,10 @@ public class MoveToOthers : MonoBehaviour
     }
     public void Move(Transform target)
     {
-        this.target=target;
-        CanMove=true;
+        if (gameObject==SelectArmy.Instance.SelectedArmy)
+        {
+            this.target = target;
+            CanMove = true;
+        }
     }
 }

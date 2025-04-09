@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RotaryHeart.Lib.SerializableDictionary;
+using Unity.VisualScripting;
 
 public class Army : MonoBehaviour
 {
@@ -12,10 +13,6 @@ public class Army : MonoBehaviour
         { "strength",0},
         { "velocity",0}
     };
-
-    
-
-
 
     float initNum;
 
@@ -56,6 +53,12 @@ public class Army : MonoBehaviour
         }
 
         ArmyDetail[name] = targetNum;
-
+        if (ArmyDetail["people"] == 0)
+            Destroy(gameObject);
+    }
+    public void BeAttacked(float Num)
+    {
+        float extraNum = gameObject.GetComponent<TerrainInteraction>().exNum;
+        StartCoroutine(AllControl(0.1f, "people",- ( Num + extraNum ), 0.1f));
     }
 }

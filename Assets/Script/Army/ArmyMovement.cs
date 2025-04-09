@@ -100,12 +100,12 @@ public class ArmyMovement : MonoBehaviour
 
                                     // 获取区域名称
                                     string areaName = GetAreaNameFromID(areaID);
-                                    Debug.Log($"采样点 {samplePoint} 所在区域: {areaName}");
+                                    //Debug.Log($"采样点 {samplePoint} 所在区域: {areaName}");
                                 }
                             }
                         }
                         // 输出所有经过的区域
-                        Debug.Log("路径将经过的区域:");
+                        //Debug.Log("路径将经过的区域:");
                         foreach (int id in areaIDs)
                         {
                             Debug.Log(GetAreaNameFromID(id));
@@ -124,7 +124,7 @@ public class ArmyMovement : MonoBehaviour
     }
     public void ArmyMove()
     {
-        if(canMove )
+        if(canMove)
             agent.SetPath(path);
     }
     public void CancelMove()

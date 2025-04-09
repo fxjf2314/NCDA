@@ -124,6 +124,9 @@ public class SelectArmy : MonoBehaviour
                         hit.transform.gameObject.GetComponent<MyArmy>().ControlResource(Time.deltaTime,"strength",ambushStrength,Time.deltaTime);
                         AmBushChoose.MyInstance.Hide();
                         hit.transform.GetComponentInChildren<Detection>().StartDetec();
+
+                        //失去控制
+                        //hit.transform.GetComponent<Detection>().
                     }
                 }
             }
