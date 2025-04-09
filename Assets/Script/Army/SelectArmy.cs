@@ -77,7 +77,7 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
                 {
                     DeselectTheArmy();
                     if (hit.transform.gameObject.CompareTag("Player"))
@@ -99,7 +99,7 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                if (Physics.Raycast(ray, out hit, 500f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
                 {
                    
                     if (hit.transform.gameObject.CompareTag("Player"))
@@ -116,14 +116,14 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
                 {
 
                     if (hit.transform.gameObject.CompareTag("Player"))
                     {
                         hit.transform.gameObject.GetComponent<MyArmy>().ControlResource(Time.deltaTime,"strength",ambushStrength,Time.deltaTime);
-                        //失去控制
-                        hit.transform.GetComponent<Detection>().
+                        AmBushChoose.MyInstance.Hide();
+                        hit.transform.GetComponentInChildren<Detection>().StartDetec();
                     }
                 }
             }
@@ -134,7 +134,7 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
                 {
 
                     if (hit.transform.gameObject.CompareTag("Player"))
@@ -161,7 +161,7 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject())
+                if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
                 {
                     if (!EventSystem.current.IsPointerOverGameObject())
                         DeselectTheArmy();
@@ -177,7 +177,7 @@ public class SelectArmy : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit) && !EventSystem.current.IsPointerOverGameObject() && hit.transform.gameObject == selectedArmy)
+                if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject() && hit.transform.gameObject == selectedArmy)
                 {
                     canSelect = true;
                     IntegrateArmy.Instance.SetButton(true);
@@ -225,13 +225,13 @@ public class SelectArmy : MonoBehaviour
                     switch (hit.transform.gameObject.tag)
                     {
                         case "Army":
-                            aYesButton.onClick.AddListener(() => a.transform.GetComponent<Collider>().GetComponent<MoveToOthers>().Move(hit.transform));
+                            aYesButton.onClick.AddListener(() => a.transform.GetComponent<MoveToOthers>().Move(hit.transform));
                             aYesButton.onClick.AddListener(() => FeignAttackChoose.MyInstance.CancelOrFinish());
                             attackPanel.SetActive(true);
                             
                             break;
                         case "Town":
-                            aYesButton.onClick.AddListener(()=> a.transform.GetComponent<Collider>().GetComponent<NavMeshAgent>().SetDestination(hit.transform.position)); 
+                            aYesButton.onClick.AddListener(()=> a.transform.GetComponent<NavMeshAgent>().SetDestination(hit.transform.position)); 
                             aYesButton.onClick.AddListener(() => FeignAttackChoose.MyInstance.CancelOrFinish());
                             attackPanel.SetActive(true);
                             
@@ -248,6 +248,9 @@ public class SelectArmy : MonoBehaviour
             yield return null;
         }
     }
+
+ 
+
 
 
     #endregion

@@ -41,7 +41,7 @@ public class ArmyMovement : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // ¼ì²âµã»÷Î»ÖÃ
+            if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // ¼ì²âµã»÷Î»ÖÃ
             {
                 switch (hit.transform.gameObject.tag)
                 {
