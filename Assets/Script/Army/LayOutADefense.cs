@@ -59,18 +59,20 @@ public class LayOutADefense : MonoBehaviour
     {
         float elapsedTime = 0.0f;
         GameObject selectedArmy = SelectArmy.Instance.SelectedArmy;
-        ArmyAction armyTBD = selectedArmy.GetComponent<ArmyAction>();
+        ArmyAction ArmyAction = selectedArmy.GetComponent<ArmyAction>();
         Army army = selectedArmy.GetComponent<Army>();
         Image buttonImage = BfButton.gameObject.GetComponent<Image>();
 
         while (elapsedTime < duration)
         {
+            ArmyAction.isArming = true;
             yield return null;
             if (!GetStateFromA(buttonImage.color))
             {
                 Debug.Log("布防终止：军队移动或按钮状态变化");
-                Debug.Log(armyTBD.isStill);
+                Debug.Log(ArmyAction.isStill);
                 Debug.Log(buttonImage.color);
+                ArmyAction.isArming = false;
                 SetButton(true);
                 yield break;
             }

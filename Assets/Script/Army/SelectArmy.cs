@@ -203,6 +203,7 @@ public class SelectArmy : MonoBehaviour
             SelectedArmy.GetComponent<ArmyMovement>().enabled = state;
             SelectedArmy.GetComponent<Outline>().enabled = state;
             armyPanel.SetActive(state);
+            LayOutADefense.Instance.SetButton(!SelectedArmy.GetComponent<ArmyAction>().isArming);
         }
     }
     #endregion

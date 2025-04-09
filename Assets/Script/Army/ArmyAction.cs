@@ -7,13 +7,13 @@ public class ArmyAction : MonoBehaviour
 {
     public bool isStill;
     private bool isTBD;
+    public bool isArming;
     private Vector3 thisPosition;
     private Vector3 lastPosition;
-    private Army army;
     private void Start()
     {
-        army=GetComponent<Army>();
         isStill = true;
+        isArming= false;
     }
     private void Update()
     {
@@ -31,6 +31,9 @@ public class ArmyAction : MonoBehaviour
             //    isTBD=false;
         }
         else
+        {
             isStill = false;
+            isArming = false;
+        } 
     }
 }
