@@ -34,8 +34,25 @@ public class TerrainInteraction : MonoBehaviour
         {
             lastTerrain = thisTerrain;
             thisTerrain = GetTerrain(other);
+            switch (lastTerrain)
+            {
+                case "平原":
+                    plain.Exit(gameObject);
+                    break;
+                case "河流":
+                    river.Exit(gameObject);
+                    break;
+                case "隘口":
+                    defile.Exit(gameObject);
+                    break;
+                case "丘陵":
+                    hilly.Exit(gameObject);
+                    break;
+                case "城镇":
+                    town.Exit(gameObject);
+                    break;
+            }
             Debug.Log("进入" + thisTerrain);
-            Reset();
             switch (thisTerrain)
             {
                 case "平原":
@@ -56,11 +73,6 @@ public class TerrainInteraction : MonoBehaviour
             }
         }
        
-    }
-    private void Reset()
-    {
-        exNum_Attack = 0;
-        exNum_Def = 0;
     }
     private string GetTerrain(Collider other)
     {
