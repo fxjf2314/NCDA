@@ -41,11 +41,12 @@ public class ArmyMovement : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // 检测点击位置
+            if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // 检测点击位置
             {
                 switch (hit.transform.gameObject.tag)
                 {
                     case "Army":
+                        aYesButton.onClick.AddListener(() => { attackPanel.gameObject.SetActive(false); });
                         aYesButton.onClick.AddListener(()=>moveToOthers.Move(hit.transform));
                         action = () =>
                         {
@@ -53,6 +54,8 @@ public class ArmyMovement : MonoBehaviour
                         };
                         break;
                     case "Town":
+                        aYesButton.onClick.RemoveAllListeners();
+                        aYesButton.onClick.AddListener(() => { attackPanel.gameObject.SetActive(false); });
                         aYesButton.onClick.AddListener(ArmyMove);
                         action = () =>
                         {
@@ -64,7 +67,7 @@ public class ArmyMovement : MonoBehaviour
                         {
                             movePanel.SetActive(true);
                         };
-                        break ;
+                        break;
                 }
                 NavMeshHit navHit;
                 // 将点击位置转换为导航网格上的点

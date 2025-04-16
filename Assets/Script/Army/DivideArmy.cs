@@ -59,7 +59,7 @@ public class DivideArmy : MonoBehaviour
             GameObject newArmy = GameObject.Instantiate(thisArmy, randomDirection, Quaternion.identity);
             //CopyScripts(thisArmy, newArmy);
             NavMeshAgent agent = newArmy.GetComponent<NavMeshAgent>();
-            newArmy.GetComponent<MyArmy>().ControlResource(0f, "people", slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"] - newArmy.GetComponent<MyArmy>().ArmyDetail["people"], 0f);
+            newArmy.GetComponent<MyArmy>().ControlResource(0f, "people", Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"]) - newArmy.GetComponent<MyArmy>().ArmyDetail["people"], 0f);
             //newArmy.GetComponent<MyArmy>().ArmyDetail["people"] = Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"]);
             Debug.Log(Convert.ToInt16(slider.value * thisArmy.GetComponent<MyArmy>().ArmyDetail["people"]));
             thisArmy.GetComponent<MyArmy>().ControlResource(0f, "people", -newArmy.GetComponent<MyArmy>().ArmyDetail["people"], 0f);

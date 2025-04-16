@@ -8,19 +8,20 @@ public class TerrainInteraction : MonoBehaviour
     private Army army;
     private string thisTerrain;
     private string lastTerrain;
+
+    public float exNum_Attack;
+    public float exNum_Def;
+
     [Header("平原")]
-    [SerializeField]
-    private float extraNum;//额外受攻击的数值
-    public float exNum;
+    public Terrain plain;
     [Header("河流")]
-    [SerializeField]
-    private float duration;
-    [SerializeField]
-    private float r_VReduction;
-    [SerializeField]
-    private float intervalTime;
+    public Terrain river;
+    [Header("隘口")]
+    public Terrain defile;
     [Header("丘陵")]
-    private float d_VReduction;
+    public Terrain hilly;
+    [Header("城镇")]
+    public Terrain town;
 
 
     private void Start()
@@ -29,32 +30,37 @@ public class TerrainInteraction : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        lastTerrain = thisTerrain;
-        thisTerrain = GetTerrain(other);
-        Debug.Log("进入"+ thisTerrain);
-        Reset();
-        switch (thisTerrain)
+        if (!other.CompareTag("Player")|| !other.CompareTag("Enemy"))
         {
-            case "平原":
-                exNum = extraNum;
-                break;
-            case "河流":
-                army.ControlResource(duration, "velocity", -r_VReduction, intervalTime);
-                break;
-            case "隘口":
-                
-                break;
-            case "丘陵":
-                army.ControlResource(0.1f, "velocity", d_VReduction, 0.1f);
-                break;
-            case "城镇":
-                break;
+            lastTerrain = thisTerrain;
+            thisTerrain = GetTerrain(other);
+            Debug.Log("进入" + thisTerrain);
+            Reset();
+            switch (thisTerrain)
+            {
+                case "平原":
+                    plain.Use(gameObject);
+                    break;
+                case "河流":
+                    river.Use(gameObject);
+                    break;
+                case "隘口":
+                    defile.Use(gameObject);
+                    break;
+                case "丘陵":
+                    hilly.Use(gameObject);
+                    break;
+                case "城镇":
+                    town.Use(gameObject);
+                    break;
+            }
         }
+       
     }
     private void Reset()
     {
-        exNum = 0;
-        army.ControlResource(0.1f, "velocity", -d_VReduction, 0.1f);
+        exNum_Attack = 0;
+        exNum_Def = 0;
     }
     private string GetTerrain(Collider other)
     {

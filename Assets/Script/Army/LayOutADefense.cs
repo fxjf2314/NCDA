@@ -14,6 +14,8 @@ public class LayOutADefense : MonoBehaviour
     [SerializeField]
     private float strength;
     private static LayOutADefense instance;
+    public float Strength { get => strength; set => strength = value; }
+    public float Duration { get => duration; set => duration = value; }
     #region 单例
     public static LayOutADefense Instance
     {
@@ -33,6 +35,7 @@ public class LayOutADefense : MonoBehaviour
         }
     }
 
+
     void Awake()
     {
         if (instance == null)
@@ -46,6 +49,7 @@ public class LayOutADefense : MonoBehaviour
         }
     }
     #endregion
+
     private void Start()
     {
         BfButton.gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
@@ -53,33 +57,7 @@ public class LayOutADefense : MonoBehaviour
     }
     public void LayOut()
     {
-        StartCoroutine(I_LayOut());
-    }
-    IEnumerator I_LayOut()
-    {
-        float elapsedTime = 0.0f;
-        GameObject selectedArmy = SelectArmy.Instance.SelectedArmy;
-        ArmyAction ArmyAction = selectedArmy.GetComponent<ArmyAction>();
-        Army army = selectedArmy.GetComponent<Army>();
-        Image buttonImage = BfButton.gameObject.GetComponent<Image>();
-
-        while (elapsedTime < duration)
-        {
-            ArmyAction.isArming = true;
-            yield return null;
-            if (!GetStateFromA(buttonImage.color))
-            {
-                Debug.Log("布防终止：军队移动或按钮状态变化");
-                Debug.Log(ArmyAction.isStill);
-                Debug.Log(buttonImage.color);
-                ArmyAction.isArming = false;
-                SetButton(true);
-                yield break;
-            }
-            elapsedTime += Time.deltaTime;
-        }
-        army.ControlResource(0.1f, "strength", strength, 0.1f);
-        Debug.Log("布防完成，力量增加");
+        SelectArmy.Instance.SelectedArmy.GetComponent<ArmyAction>().LayOut();
     }
     public bool GetStateFromA(Color color)
     {

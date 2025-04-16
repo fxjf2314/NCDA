@@ -58,7 +58,7 @@ public class Army : MonoBehaviour
     }
     public void BeAttacked(float Num)
     {
-        float extraNum = gameObject.GetComponent<TerrainInteraction>().exNum;
+        float extraNum = gameObject.GetComponent<TerrainInteraction>().exNum_Attack;
         StartCoroutine(AllControl(0.1f, "people",- ( Num + extraNum ), 0.1f));
     }
 }
