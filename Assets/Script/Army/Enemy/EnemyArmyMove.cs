@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
 
-public class EnemyArmyBehavior: MonoBehaviour
+public class EnemyArmyMove: MonoBehaviour
 {
-    public static EnemyArmyBehavior Instance => instance;
-    private static EnemyArmyBehavior instance;
+    public static EnemyArmyMove Instance => instance;
+    private static EnemyArmyMove instance;
 
     [SerializeField]
     float minDis;
@@ -30,7 +30,17 @@ public class EnemyArmyBehavior: MonoBehaviour
         }
     }
 
-    public void SurroundArmy(Transform target, params EnemyArmy[] enemyArmies)
+    
+    /// <summary>
+    /// 包围目标军队
+    /// </summary>
+    /// <param name="target">
+    /// 被包围的军队
+    /// </param>
+    /// <param name="enemyArmies">
+    /// 包围目标的军队
+    /// </param>
+    public void SurroundArmy(Transform target, params EnemyAI[] enemyArmies)
     {
         if(enemyArmies == null || enemyArmies.Length <= 0)
         {
@@ -38,9 +48,9 @@ public class EnemyArmyBehavior: MonoBehaviour
         }
         foreach(var enemy in enemyArmies)
         {
-            enemy.agentGoal = target;
+            enemy.SetMoveGoal(target);
         }
-        EnemyArmy[] oneSide, otherSide;
+        EnemyAI[] oneSide, otherSide;
         DivideArmies(target, enemyArmies, out oneSide, out otherSide);
         SurroundTragetFromOneSide(target, Tool.TurnIntoComponent<NavMeshAgent>(oneSide));
         if(otherSide != null)
@@ -50,16 +60,16 @@ public class EnemyArmyBehavior: MonoBehaviour
     }
 
     //将Ai军队分成两类，形成两面包夹芝士
-    private void DivideArmies(Transform target, EnemyArmy[] enemyArmies, out EnemyArmy[] oneSide, out EnemyArmy[] otherSide)
+    private void DivideArmies(Transform target, EnemyAI[] enemyArmies, out EnemyAI[] oneSide, out EnemyAI[] otherSide)
     {
-        List<EnemyArmy> group1 = new List<EnemyArmy>();
-        List<EnemyArmy> group2 = new List<EnemyArmy>();
+        List<EnemyAI> group1 = new List<EnemyAI>();
+        List<EnemyAI> group2 = new List<EnemyAI>();
         Transform[] transforms = Tool.TurnIntoTransform(enemyArmies);
         if (GeometryUtils.CalculateDispersion(transforms) >= dispersionThreshold)
         {
             //稀疏程度较大则分成两类
             Vector3 direction = GeometryUtils.CalculateDynamicBoundary(target, transforms);
-            foreach (EnemyArmy obj in enemyArmies)
+            foreach (EnemyAI obj in enemyArmies)
             {
                 Vector3 toObj = obj.transform.position - target.position;
                 float dot = Vector3.Dot(toObj.normalized, direction);
@@ -72,7 +82,7 @@ public class EnemyArmyBehavior: MonoBehaviour
         else
         {
             //稀疏程度较小则只分成一类
-            foreach (EnemyArmy obj in enemyArmies)
+            foreach (EnemyAI obj in enemyArmies)
             {
                 group1.Add(obj);
             }

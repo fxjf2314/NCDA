@@ -66,4 +66,19 @@ public static class Tool
         }
         return totalCost;
     }
+
+    public static Vector3 FindNearestCityFromPlayerCitys(Transform enemy, List<Vector3> playerCitys)
+    {
+        int index = 0;
+        float dis = Vector3.Distance(enemy.position, playerCitys[0]);
+        for (int i = 0; i < playerCitys.Count; i++)
+        {
+            if(Vector3.Distance(enemy.position, playerCitys[i]) < dis)
+            {
+                index = i;
+                dis = Vector3.Distance(enemy.position, playerCitys[i]);
+            }
+        }
+        return playerCitys[index];
+    }
 }

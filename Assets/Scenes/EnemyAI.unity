@@ -242,13 +242,16 @@ GameObject:
   - component: {fileID: 280338266}
   - component: {fileID: 280338265}
   - component: {fileID: 280338264}
+  - component: {fileID: 280338271}
+  - component: {fileID: 280338270}
+  - component: {fileID: 280338272}
   m_Layer: 0
   m_Name: Enemy (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &280338264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,39 +264,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
-      canAdd: 0
-      canRemove: 0
-      draggable: 0
-      expandable: 0
-      multipleSelection: 0
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
       isExpanded: 0
       label:
-        m_Text: 
+        m_Text: Keys
         m_Image: {fileID: 0}
         m_Tooltip: 
-      headerHeight: 0
-      footerHeight: 0
-      slideEasing: 0
-      verticalSpacing: 0
-      showDefaultBackground: 0
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
       elementDisplayType: 0
       elementNameProperty: 
       elementNameOverride: 
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strenth
+    - velocity
+    _keys:
+    - people
+    - strenth
+    - velocity
+    _values:
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
 --- !u!195 &280338265
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -402,6 +410,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &280338270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280338263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &280338271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280338263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
+--- !u!114 &280338272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280338263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
 --- !u!1 &389672363
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,13 +467,16 @@ GameObject:
   - component: {fileID: 389672366}
   - component: {fileID: 389672365}
   - component: {fileID: 389672370}
+  - component: {fileID: 389672372}
+  - component: {fileID: 389672371}
+  - component: {fileID: 389672373}
   m_Layer: 0
   m_Name: Enemy (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &389672365
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -543,7 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
       canAdd: 0
       canRemove: 0
@@ -566,16 +620,64 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strenth
+    - velocity
+    _keys:
+    - people
+    - strenth
+    - velocity
+    _values:
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
+--- !u!114 &389672371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389672363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &389672372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389672363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
+--- !u!114 &389672373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389672363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
 --- !u!1 &437795513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,13 +1144,16 @@ GameObject:
   - component: {fileID: 759324530}
   - component: {fileID: 759324529}
   - component: {fileID: 759324534}
+  - component: {fileID: 759324536}
+  - component: {fileID: 759324535}
+  - component: {fileID: 759324537}
   m_Layer: 0
   m_Name: Enemy (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &759324529
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1169,7 +1274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
       canAdd: 0
       canRemove: 0
@@ -1192,16 +1297,64 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strenth
+    - velocity
+    _keys:
+    - people
+    - strenth
+    - velocity
+    _values:
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
+--- !u!114 &759324535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759324528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &759324536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759324528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
+--- !u!114 &759324537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759324528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,13 +1461,16 @@ GameObject:
   - component: {fileID: 1179356643}
   - component: {fileID: 1179356642}
   - component: {fileID: 1179356647}
+  - component: {fileID: 1179356649}
+  - component: {fileID: 1179356648}
+  - component: {fileID: 1179356650}
   m_Layer: 0
   m_Name: Enemy (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &1179356642
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1435,39 +1591,87 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
-      canAdd: 0
-      canRemove: 0
-      draggable: 0
-      expandable: 0
-      multipleSelection: 0
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
       isExpanded: 0
       label:
-        m_Text: 
+        m_Text: Keys
         m_Image: {fileID: 0}
         m_Tooltip: 
-      headerHeight: 0
-      footerHeight: 0
-      slideEasing: 0
-      verticalSpacing: 0
-      showDefaultBackground: 0
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
       elementDisplayType: 0
       elementNameProperty: 
       elementNameOverride: 
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strenth
+    - velocity
+    _keys:
+    - people
+    - strenth
+    - velocity
+    _values:
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
+--- !u!114 &1179356648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179356641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1179356649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179356641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
+--- !u!114 &1179356650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179356641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
 --- !u!1 &1238609603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,7 +1767,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267946192}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d8f180b4affa8d544a6d1f42c321fd61, type: 3}
   m_Name: 
@@ -1577,19 +1781,23 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267946192}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1cddafaa544568342b9589346efdef7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allCitys: []
+  playerCity: []
+  enemyCity: []
   target: {fileID: 1961412417}
   enemies:
-  - {fileID: 1425906066}
+  - {fileID: 0}
   - {fileID: 1179356647}
   - {fileID: 759324534}
   - {fileID: 389672370}
   - {fileID: 280338264}
   - {fileID: 1300474077}
+  allPlayerArmys: []
 --- !u!4 &1267946195
 Transform:
   m_ObjectHideFlags: 0
@@ -1619,13 +1827,16 @@ GameObject:
   - component: {fileID: 1300474079}
   - component: {fileID: 1300474078}
   - component: {fileID: 1300474077}
+  - component: {fileID: 1300474084}
+  - component: {fileID: 1300474083}
+  - component: {fileID: 1300474085}
   m_Layer: 0
   m_Name: Enemy (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1300474077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1638,7 +1849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
       canAdd: 0
       canRemove: 0
@@ -1661,16 +1872,21 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strenth
+    - velocity
+    _keys:
+    - people
+    - strenth
+    - velocity
+    _values:
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
 --- !u!195 &1300474078
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1779,6 +1995,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1300474083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300474076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1300474084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300474076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
+--- !u!114 &1300474085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300474076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
 --- !u!1 &1425906059
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,6 +2051,9 @@ GameObject:
   - component: {fileID: 1425906061}
   - component: {fileID: 1425906060}
   - component: {fileID: 1425906065}
+  - component: {fileID: 1425906069}
+  - component: {fileID: 1425906068}
+  - component: {fileID: 1425906067}
   - component: {fileID: 1425906066}
   m_Layer: 0
   m_Name: Enemy
@@ -1920,7 +2182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023dc76d94335d94792c821c987c5d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dic:
+  ArmyDetail:
     reorderableList:
       canAdd: 1
       canRemove: 1
@@ -1943,16 +2205,67 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 1
-    _keyValues: []
-    _keys: []
-    _values: []
-  Agent: {fileID: 0}
-  agentGoal: {fileID: 0}
-  minDis: 5
-  limitedPeople: 0
-  checkRadio: 10
-  isInCity: 0
-  isMoving: 0
+    _keyValues:
+    - people
+    - strength
+    - velocity
+    - peopleLimit
+    _keys:
+    - people
+    - strength
+    - velocity
+    - peopleLimit
+    _values:
+    - 0
+    - 0
+    - 0
+    - 0
+  agent: {fileID: 0}
+  agentGoal: {x: 0, y: 0, z: 0}
+  AIConfig: {fileID: 0}
+--- !u!114 &1425906067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425906059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed32350fc58ebd24b849cd32e18e97f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nearCitys: []
+  enemys: []
+  enemyAttack: 0
+  playerArmy: []
+  playerAttack: 0
+--- !u!114 &1425906068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425906059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc0e6ff42c0c91446a4ff63aec8884de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1425906069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425906059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77e0cdeb5b57b46a780275bbc3c05e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 0}
+  behaviors: {fileID: 0}
 --- !u!1 &1518227172
 GameObject:
   m_ObjectHideFlags: 0

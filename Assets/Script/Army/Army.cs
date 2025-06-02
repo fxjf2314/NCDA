@@ -5,20 +5,14 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public class Army : MonoBehaviour
 {
-
     public SerializableDictionaryBase<string, float> ArmyDetail = new SerializableDictionaryBase<string, float>
     {
         {"people",0 },
         { "strength",0},
         { "velocity",0}
     };
-
-    
-
-
-
     float initNum;
-
+    [HideInInspector]public List<Army> nearbyEnemyArmy = new List<Army>();
 
     public float GetPeople()
     {
