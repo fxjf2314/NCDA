@@ -81,6 +81,7 @@ public class SelectArmy : MonoBehaviour
             SelectedArmy.GetComponent<ArmyMovement>().enabled = state;
             SelectedArmy.GetComponent<Outline>().enabled = state;
             armyPanel.SetActive(state);
+            //FadeScript.instance.Fade(armyPanel,state);
         }
     }
     #endregion
