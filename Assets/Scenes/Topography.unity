@@ -4322,26 +4322,6 @@ MonoBehaviour:
       elementNameProperty: 
       elementNameOverride: 
       elementIcon: {fileID: 0}
-<<<<<<< Updated upstream
-      controlID: 0
-      elementRects: []
-      elementLabel:
-        m_Text: 
-        m_Image: {fileID: 0}
-        m_Tooltip: 
-      pressIndex: 0
-      dragging: 0
-      pressPosition: 0
-      dragPosition: 0
-      dragDirection: 0
-      dragDropControlID: 0
-      enablePages: 0
-      perPageCount: 0
-      currentPage: 0
-      pagesCount: 0
-      showPage: 0
-=======
->>>>>>> Stashed changes
     reqReferences: {fileID: 0}
     isExpanded: 0
     _keyValues: []
