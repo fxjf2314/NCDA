@@ -22,54 +22,14 @@ public class DragCamera : MonoBehaviour
 
     private void Start()
     {
-        mainCamera = Camera.main;
+        mainCamera = GetComponent<Camera>();
         currentYPosition = mainCamera.transform.position.y; // 保存当前 Y 轴位置
         //targetCameraPosition = mainCamera.transform.position;
     }
 
     private void Update()
     {
-        // 检测鼠标左键点击
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            // 射线检测
-            if (Physics.Raycast(ray, out hit, 500f, targetLayer) && !EventSystem.current.IsPointerOverGameObject())
-            {
-                // 如果击中了目标物体，调整摄像机的位置
-                Vector3 targetPosition = hit.collider.gameObject.transform.position;
-                Vector3 cameraPosition = new Vector3(0, 0, 0);
-                // 计算摄像机的新位置
-                switch (hit.collider.gameObject.name)
-                {
-                    case "North":
-                        cameraPosition = new Vector3(-20, 0, -10);
-                        break;
-                    case "West":
-                        cameraPosition = new Vector3(-150, 0, -140);
-                        break;
-                    case "South":
-                        cameraPosition = new Vector3(-20, 0, -270);
-                        break;
-                    case "Center":
-                        cameraPosition = new Vector3(-20, 0, -140);
-                        break;
-                    case "WestSouth":
-                        cameraPosition = new Vector3(-150, 0, -270);
-                        break;
-                }
-
-                cameraPosition.y = currentYPosition; // 保持当前 Y 轴位置
-
-                // 应用新的位置
-                //mainCamera.transform.position = cameraPosition;
-                //mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraPosition, smoothSpeed);
-                StartCoroutine(MoveCameraToPosition(cameraPosition));
-            }
-        }
-
+                
         // 检测鼠标中键拖拽
         if (Input.GetMouseButton(2)) // 按住鼠标中键拖拽
         {

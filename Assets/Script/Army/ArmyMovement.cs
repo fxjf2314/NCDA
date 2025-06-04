@@ -16,9 +16,10 @@ public class ArmyMovement : MonoBehaviour
     private Button aYesButton;
     private Button aNoButton;
     private NavMeshAgent agent; // 导航代理
-    private NavMeshPath path;
+    public NavMeshPath path;
     private bool canMove;
     public MoveToOthers moveToOthers;
+    private bool destinationReached;
 
     void Start()
     {
@@ -35,17 +36,30 @@ public class ArmyMovement : MonoBehaviour
 
     void Update()
     {
+        void Update()
+        {
+            if (agent.pathPending) return; // 路径计算中
+
+            // 到达条件检测
+            if (!destinationReached &&
+                agent.remainingDistance <= 4f &&
+                agent.velocity.sqrMagnitude == 0f)
+            {
+                OnDestinationReached();
+            }
+        }
         if (Input.GetMouseButtonDown(0)) // 检测鼠标点击
         {
             Action action;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // 检测点击位置
+            if (Physics.Raycast(ray, out hit, 100f, -1, QueryTriggerInteraction.Ignore)&&!hit.transform.gameObject.CompareTag("Player")&&!EventSystem.current.IsPointerOverGameObject()) // 检测点击位置
             {
                 switch (hit.transform.gameObject.tag)
                 {
                     case "Army":
+                        aYesButton.onClick.AddListener(() => { attackPanel.gameObject.SetActive(false); });
                         aYesButton.onClick.AddListener(()=>moveToOthers.Move(hit.transform));
                         action = () =>
                         {
@@ -53,6 +67,8 @@ public class ArmyMovement : MonoBehaviour
                         };
                         break;
                     case "Town":
+                        aYesButton.onClick.RemoveAllListeners();
+                        aYesButton.onClick.AddListener(() => { attackPanel.gameObject.SetActive(false); });
                         aYesButton.onClick.AddListener(ArmyMove);
                         action = () =>
                         {
@@ -64,7 +80,7 @@ public class ArmyMovement : MonoBehaviour
                         {
                             movePanel.SetActive(true);
                         };
-                        break ;
+                        break;
                 }
                 NavMeshHit navHit;
                 // 将点击位置转换为导航网格上的点
@@ -100,18 +116,19 @@ public class ArmyMovement : MonoBehaviour
 
                                     // 获取区域名称
                                     string areaName = GetAreaNameFromID(areaID);
-                                    Debug.Log($"采样点 {samplePoint} 所在区域: {areaName}");
+                                    //Debug.Log($"采样点 {samplePoint} 所在区域: {areaName}");
                                 }
                             }
                         }
                         // 输出所有经过的区域
-                        Debug.Log("路径将经过的区域:");
+                        //Debug.Log("路径将经过的区域:");
                         foreach (int id in areaIDs)
                         {
                             Debug.Log(GetAreaNameFromID(id));
                         }
                         action.Invoke();
                         canMove = true;
+                        moveToOthers.CanMove = false;
                     }
                     else
                     {
@@ -121,12 +138,27 @@ public class ArmyMovement : MonoBehaviour
             }
         }
     }
-    private void ArmyMove()
+    private void OnDestinationReached()
     {
-        if(canMove )
-            agent.SetPath(path);
+        destinationReached = true;
+
+        // 这里添加到达后的逻辑
+        agent.ResetPath(); // 清除当前路径
     }
-    private void CancelMove()
+
+    public void ArmyMove()
+    {
+<<<<<<< Updated upstream
+        if (canMove)
+        {
+=======
+        if(canMove)
+>>>>>>> Stashed changes
+            agent.SetPath(path);
+            destinationReached = false; 
+        }
+    }
+    public void CancelMove()
     {
         canMove = false;
     }
@@ -158,7 +190,11 @@ public class ArmyMovement : MonoBehaviour
             case 0: return "Walkable"; // 默认区域
             case 1: return "Not Walkable"; // 不可行走区域
             case 2: return "Jump"; // 跳跃区域
-            case 3: return "River";
+            case 3: return "平原";
+            case 4: return "河流";
+            case 5: return "隘口";
+            case 6: return "丘陵";
+            case 7: return "城镇";
             default: return "Unknown";
         }
     }

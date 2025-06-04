@@ -11,9 +11,15 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
+  - name: Plain
+    cost: 1
   - name: River
     cost: 1
-  - name: 
+  - name: Defile
+    cost: 1
+  - name: 'Hilly '
+    cost: 1
+  - name: Town
     cost: 1
   - name: 
     cost: 1
@@ -63,13 +69,7 @@ NavMeshProjectSettings:
     cost: 1
   - name: 
     cost: 1
-  - name: 
-    cost: 1
-  - name: 
-    cost: 1
-  - name: 
-    cost: 1
-  m_LastAgentTypeID: 1479372276
+  m_LastAgentTypeID: -887442657
   m_Settings:
   - serializedVersion: 3
     agentTypeID: 0

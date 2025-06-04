@@ -6,31 +6,37 @@ using UnityEngine.AI;
 public class MoveToOthers : MonoBehaviour
 {
     private NavMeshAgent agent;
+    [SerializeField]
     private bool canMove;
     private Transform target;
+
+    public bool CanMove { get => canMove; set => canMove = value; }
+
     private void Start()
     {
         agent=GetComponent<NavMeshAgent>();
     }
     void Update()
     {
-        if (canMove)
+        if (CanMove)
         {
             agent.SetDestination(target.position);
         }
     }
     private void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("111");
         if (target&& collider.gameObject == target.gameObject)
         {
-            canMove = false;
+            CanMove = false;
             agent.SetDestination(agent.transform.position);
         }
     }
     public void Move(Transform target)
     {
-        this.target=target;
-        canMove=true;
+        if (gameObject==SelectArmy.Instance.SelectedArmy)
+        {
+            this.target = target;
+            CanMove = true;
+        }
     }
 }
