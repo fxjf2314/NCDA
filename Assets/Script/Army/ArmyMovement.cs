@@ -148,12 +148,8 @@ public class ArmyMovement : MonoBehaviour
 
     public void ArmyMove()
     {
-<<<<<<< Updated upstream
         if (canMove)
         {
-=======
-        if(canMove)
->>>>>>> Stashed changes
             agent.SetPath(path);
             destinationReached = false; 
         }

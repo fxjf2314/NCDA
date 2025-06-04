@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-<<<<<<< Updated upstream
 using TMPro;
 using Unity.AI.Navigation;
 using UnityEditor;
@@ -77,21 +76,5 @@ public class Towns : MonoBehaviour
             agent.SetDestination(army.position);
             army.GetComponent<ArmyMovement>().path = new NavMeshPath();
         }
-=======
-using UnityEngine;
-
-public class Towns : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
->>>>>>> Stashed changes
     }
 }

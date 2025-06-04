@@ -6,16 +6,11 @@ using UnityEngine;
 public class TerrainInteraction : MonoBehaviour
 {
     private Army army;
-<<<<<<< Updated upstream
     // 当前激活的地形效果
     private string activeTerrain = "";
 
     // 记录角色当前所在的所有地形区域
     private List<string> overlappingTerrains = new List<string>();
-=======
-    private string thisTerrain;
-    private string lastTerrain;
->>>>>>> Stashed changes
 
     public float exNum_Attack;
     public float exNum_Def;
@@ -38,7 +33,6 @@ public class TerrainInteraction : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-<<<<<<< Updated upstream
         if (!other.CompareTag("Player") && !other.CompareTag("Army"))
         {
             string newTerrain = GetTerrain(other);
@@ -127,52 +121,6 @@ public class TerrainInteraction : MonoBehaviour
         }
     }
 
-=======
-        if (!other.CompareTag("Player")|| !other.CompareTag("Enemy"))
-        {
-            lastTerrain = thisTerrain;
-            thisTerrain = GetTerrain(other);
-            switch (lastTerrain)
-            {
-                case "平原":
-                    plain.Exit(gameObject);
-                    break;
-                case "河流":
-                    river.Exit(gameObject);
-                    break;
-                case "隘口":
-                    defile.Exit(gameObject);
-                    break;
-                case "丘陵":
-                    hilly.Exit(gameObject);
-                    break;
-                case "城镇":
-                    town.Exit(gameObject);
-                    break;
-            }
-            Debug.Log("进入" + thisTerrain);
-            switch (thisTerrain)
-            {
-                case "平原":
-                    plain.Use(gameObject);
-                    break;
-                case "河流":
-                    river.Use(gameObject);
-                    break;
-                case "隘口":
-                    defile.Use(gameObject);
-                    break;
-                case "丘陵":
-                    hilly.Use(gameObject);
-                    break;
-                case "城镇":
-                    town.Use(gameObject);
-                    break;
-            }
-        }
-       
-    }
->>>>>>> Stashed changes
     private string GetTerrain(Collider other)
     {
         if (other.GetComponent<NavMeshModifierVolume>())
