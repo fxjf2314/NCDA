@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 
 enum ChooseType
@@ -11,6 +12,7 @@ enum ChooseType
 }
 
 [RequireComponent(typeof(EnemyArmyMove))]
+[RequireComponent(typeof(EnemyAIManagerStraPri))]
 public class EnemyAIManager : MonoBehaviour
 {
     public static EnemyAIManager Instance => instance;
@@ -25,11 +27,9 @@ public class EnemyAIManager : MonoBehaviour
     [HideInInspector]
     public List<City> enemyCity;
     [SerializeField]
-    Transform target;
-    [SerializeField]
     List<EnemyAI> enemies;
     [HideInInspector]
-    public List<Army> allPlayerArmys;//如何维护？
+    public List<Army> allPlayerArmys;
     float time;
 
     private void Start()
@@ -183,16 +183,57 @@ public class EnemyAIManager : MonoBehaviour
         List<EnemyAI> movingenemy = ChooseEnemy(ChooseType.moveforward);
         for (int i = 0; i < movingenemy.Count; i++)
         {
-            movingenemy[i].agent.SetDestination(FindNearestCity(movingenemy[i]).transform.position);
+            movingenemy[i].ExecuteBehaviour(EnemyArmyBehavior.moveForward, 5);
+        }
+    }
+
+    //围剿玩家
+    void SurroundArmy()
+    {
+        List<EnemyAI> surrundEnemy = ChooseEnemy(ChooseType.surround);
+        for (int i = 0; i < surrundEnemy.Count; i++)
+        {
+            surrundEnemy[i].aism.ChangeState(new SurroundState(surrundEnemy[i], allPlayerArmys[0]));
+        }
+        EnemyArmyMove.Instance.SurroundArmy(allPlayerArmys[0].transform, surrundEnemy.ToArray());
+    }
+
+    //进行支援
+    public void Support(EnemyAI needSupportEnemy)
+    {
+        //List<EnemyAI> enemiesCopy = new List<EnemyAI>(enemies);
+        //enemiesCopy.Remove(needSupportEnemy);
+        //int supportcount = Random.Range(0,10)/8 + 1;
+        //for(int j = 0; j < supportcount; j++)
+        //{
+        //    float minDis = Vector3.Distance(needSupportEnemy.transform.position, enemiesCopy[0].transform.position);
+        //    EnemyAI nearEnemy = enemiesCopy[0];
+        //    for (int i = 0; i < enemiesCopy.Count; i++)
+        //    {
+        //        float dis = Vector3.Distance(needSupportEnemy.transform.position, enemiesCopy[i].transform.position);
+        //        if (dis < minDis)
+        //        {
+        //            minDis = dis;
+        //            nearEnemy = enemiesCopy[i];
+        //        }
+        //    }
+        //    //移出列表确保不会重复选到
+        //    enemies.Remove(nearEnemy);
+        //    nearEnemy.aism.ChangeState(new SupportState(nearEnemy, needSupportEnemy));
+        //}
+        List<EnemyAI> supportArmy = FindNearestEnemyArmy(needSupportEnemy, Random.Range(0, 10) / 8 + 1);
+        for (int i = 0;i < supportArmy.Count;i++)
+        {
+            supportArmy[i].aism.ChangeState(new SupportState(supportArmy[i], needSupportEnemy));
         }
     }
 
     //找到离该部队最近的玩家方城市
-    City FindNearestCity(EnemyAI enemy)
+    public City FindNearestCity(EnemyAI enemy)
     {
         City nearestCity = playerCity[0];
         float mindis = Vector3.Distance(playerCity[0].transform.position, enemy.transform.position);
-        for (int i = 1;i < playerCity.Count;i++)
+        for (int i = 1; i < playerCity.Count; i++)
         {
             float dis = Vector3.Distance(playerCity[i].transform.position, enemy.transform.position);
             if (dis < mindis)
@@ -204,6 +245,49 @@ public class EnemyAIManager : MonoBehaviour
         return nearestCity;
     }
 
+    //找到离需要支援的部队的最近1-2个单位
+    public List<EnemyAI> FindNearestEnemyArmy(EnemyAI enemy, int supportcount = 1)
+    {
+        if(supportcount <1 || supportcount > enemies.Count-1)
+        {
+            Debug.LogError("支援部队数量不合规");
+        }
+        List<EnemyAI> nearEnemies = new List<EnemyAI>();
+        List<EnemyAI> enemiesCopy = new List<EnemyAI>(enemies);
+        enemiesCopy.Remove(enemy);
+        for (int j = 0; j < supportcount; j++)
+        {
+            float minDis = Vector3.Distance(enemy.transform.position, enemiesCopy[0].transform.position);
+            EnemyAI nearEnemy = enemiesCopy[0];
+            for (int i = 0; i < enemiesCopy.Count; i++)
+            {
+                float dis = Vector3.Distance(enemy.transform.position, enemiesCopy[i].transform.position);
+                if (dis < minDis)
+                {
+                    minDis = dis;
+                    nearEnemy = enemiesCopy[i];
+                }
+            }
+            //移出列表确保不会重复选到
+            enemies.Remove(nearEnemy);
+            nearEnemies.Add(nearEnemy);
+        }
+        return nearEnemies;
+        //EnemyAI nearestEnemyArmy = enemies[0];
+        //float mindis = Vector3.Distance(enemies[0].transform.position, enemy.transform.position);
+        //for (int i = 1; i < enemies.Count; i++)
+        //{
+        //    float dis = Vector3.Distance(enemies[i].transform.position, enemy.transform.position);
+        //    if (dis < mindis)
+        //    {
+        //        mindis = dis;
+        //        nearestEnemyArmy = enemies[i];
+        //    }
+        //}
+        //return nearestEnemyArmy;
+    }
+
+    #region 挑选执行相应指令的军队
     List<EnemyAI> ChooseEnemy(ChooseType choosetype)
     {
         List<EnemyAI> chosen = new List<EnemyAI>();
@@ -212,8 +296,7 @@ public class EnemyAIManager : MonoBehaviour
             case ChooseType.moveforward:
                 {
                     chosen = ChooseMovingEnemy();
-                }
-                break;
+                }break;
             case ChooseType.surround:
                 {
                     chosen = ChooseSurroundEnemy();
@@ -252,12 +335,7 @@ public class EnemyAIManager : MonoBehaviour
         }
         return chosenEnemy;
     }
-
-    void SurroundArmy()
-    {
-        List<EnemyAI> surrundEnemy = ChooseEnemy(ChooseType.surround);
-        EnemyArmyMove.Instance.SurroundArmy(allPlayerArmys[0].transform, surrundEnemy.ToArray());
-    }
+    #endregion
 
     //根据周围敌人军队的多少来排序
     void OrderPlayerArmy()
@@ -305,20 +383,12 @@ public class EnemyAIManager : MonoBehaviour
 
     }
 
-    //AI总指挥，可以指挥单个ai推进战线，包围玩家，支援队友
-    void CaculatePriority()
-    {
-        float moveforward;
-        float surrondarmy;
-
-    }
-
     void UpdataStrategy()
     {
         time += Time.deltaTime;
         if (time >= 5)
         {
-            CaculatePriority();
+            //CaculatePriority();
         }
     }
 

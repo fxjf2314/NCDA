@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 
 // 状态机控制器
@@ -25,23 +26,19 @@ public class EnemyAIStateMachine : MonoBehaviour
         this.behaviors = behaviors;
     }
 
-    //mode = true时采用强制切换状态
-    public void ChangeState(BaseState newState, bool Mode = false)
+    //newState=99时采用强制切换
+    public void ChangeState(BaseState newState)
     {
-        if(!Mode)
+        if ((bool)(currentState?.isCanExit(newState.stateLevel)))
         {
-            if (currentState == null || (currentState.isCanExit() == true))
-            {
-                currentState?.Exit();
-                currentState = newState;
-                currentState?.Enter();
-            }
+            currentState.Exit();
+            currentState = newState;
+            currentState.Enter();
         }
         else
         {
-            currentState?.Exit();
             currentState = newState;
-            currentState?.Enter();
+            currentState.Enter();
         }
     }
 
@@ -56,15 +53,20 @@ public class EnemyAIStateMachine : MonoBehaviour
 
 public class BaseState : IEnemyState
 {
+    protected EnemyAI enemyAI;
     public NavMeshAgent agent;
     protected EnemyContext context;
     protected EnemyAIStateMachine aiStateMachine;
+    public int stateLevel = 0;//表示指令动作的优先级
 
-    public BaseState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine)
+    //可以在实例化时进行动态优先级调整
+    public BaseState(EnemyAI enemyAI,int stateLevel = 0)
     {
-        this.agent = agent;
-        this.context = context;
-        this.aiStateMachine = aiStateMachine;
+        this.enemyAI = enemyAI;
+        this.agent = enemyAI.agent;
+        this.context = enemyAI.context;
+        this.aiStateMachine = enemyAI.aism;
+        this.stateLevel = stateLevel;
         //Debug.Log(gameObject.name);
     }
 
@@ -78,9 +80,9 @@ public class BaseState : IEnemyState
         aiStateMachine.currentState = null;
     }
 
-    public virtual bool isCanExit()
+    public virtual bool isCanExit(int nextStateLevel = 100)
     {
-        return true;
+        return nextStateLevel > stateLevel;
     }
 
     public virtual void IUpdate()
@@ -89,49 +91,51 @@ public class BaseState : IEnemyState
     }
 }
 
-//移动到城市
+//移动到城市2
 public class MoveToCityState : BaseState
 {
     private Vector3 city;
 
-    public MoveToCityState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine): base(agent, context, ref aiStateMachine)
+    public MoveToCityState(EnemyAI enemyAI,NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine,int stateLevel = 2)
+                            : base(enemyAI,stateLevel)
     {
         
     }
     public override void Enter()
     {
-        city = context.GetNearestCity();
         aiStateMachine.behaviors.MoveToCity();
     }
 
     public override void Exit()
     {
-        agent.isStopped=true;
+        enemyAI.StopMove();
         base.Exit();
     }
     //距离过近即可退出状态
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
         return Vector3.Distance(aiStateMachine.transform.position, city) < aiStateMachine.config.minDis;
     }
 
     public override void IUpdate()
     {
-        if(Vector3.Distance(aiStateMachine.transform.position, city) < aiStateMachine.config.minDis)
+        if(isCanExit())
         {
-            agent.isStopped = true;
+            Exit();
         }
     }
    
 }
 
-
-//撤退状态
+//撤退状态5
 public class RetreatState : BaseState
 {
     public Vector3 targetPos;
 
-    public RetreatState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
+    public RetreatState(EnemyAI enemyAI, NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine, int stateLevel = 5) 
+                        : base(enemyAI, stateLevel)
     {
 
     }
@@ -144,12 +148,14 @@ public class RetreatState : BaseState
 
     public override void Exit()
     {
-        agent.isStopped = true;
+        enemyAI.StopMove();
         base.Exit();
     }
 
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
         return Vector3.Distance(aiStateMachine.transform.position, targetPos) < aiStateMachine.config.minDis;
     }
 
@@ -162,45 +168,48 @@ public class RetreatState : BaseState
     }
 }
 
-//前进状态(未完成)
+//前进状态3
 public class MoveForwardState : BaseState
 {
-    public Vector3 playerCity;
+    City playerCity;
 
-    public MoveForwardState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
+    public MoveForwardState(EnemyAI enemyAI, NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine, int stateLevel = 3)
+                            : base(enemyAI, stateLevel)
     {
 
     }
     public override void Enter()
     {
-        //playerCity = Tool.FindNearestCityFromPlayerCitys(transform, EnemyAIManager.Instance.playerCity);
-        aiStateMachine.behaviors.MoveForward();
+        playerCity = aiStateMachine.behaviors.MoveForward();
     }
 
     public override void Exit()
     {
-        agent.isStopped = true;
+        enemyAI.StopMove();
         base.Exit();
     }
 
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
-        return true;
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
+        return Vector3.Distance(aiStateMachine.transform.position, playerCity.transform.position) < aiStateMachine.config.minDis;
     }
 
     public override void IUpdate()
     {
-        //if (isCanExit())
-        //{
-        //    Exit();
-        //}
+        if (!isCanExit())
+        {
+            Exit();
+        }
     }
 }
 
-//原地待机状态
+//原地待机状态2
 public class StationState : BaseState
 {
-    public StationState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
+    public StationState(EnemyAI enemyAI, NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine, int stateLevel = 2)
+                        : base(enemyAI, stateLevel)
     {
 
     }
@@ -211,13 +220,14 @@ public class StationState : BaseState
 
     public override void Exit()
     {
-        agent.isStopped = true;
         base.Exit();
     }
 
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
-        return true;
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
+        return false;
     }
 
     public override void IUpdate()
@@ -226,40 +236,12 @@ public class StationState : BaseState
     }
 }
 
-//据守城池状态
-public class StayInCityState : BaseState
-{
-    public StayInCityState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
-    {
-
-    }
-    public override void Enter()
-    {
-        aiStateMachine.behaviors.StayInCity();
-    }
-
-    public override void Exit()
-    {
-        agent.isStopped = true;
-        base.Exit();
-    }
-
-    public override bool isCanExit()
-    {
-        return true;
-    }
-
-    public override void IUpdate()
-    {
-
-    }
-}
-
-//攻击状态
+//攻击状态4
 public class AttackState : BaseState
 {
-    Army target;
-    public AttackState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
+    public Army target;
+    public AttackState(EnemyAI enemyAI, NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine, int stateLevel = 4)
+                        : base(enemyAI, stateLevel)
     {
 
     }
@@ -271,14 +253,15 @@ public class AttackState : BaseState
 
     public override void Exit()
     {
-        agent.isStopped = true;
         aiStateMachine.behaviors.StopAttack();
         base.Exit();
     }
 
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
-        return true;
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
+        return target == null;
     }
 
     public override void IUpdate()
@@ -287,10 +270,11 @@ public class AttackState : BaseState
     }
 }
 
-//治疗状态
+//治疗状态3
 public class HealingState : BaseState
 {
-    public HealingState(NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine) : base(agent, context, ref aiStateMachine)
+    public HealingState(EnemyAI enemyAI, NavMeshAgent agent, EnemyContext context, ref EnemyAIStateMachine aiStateMachine, int stateLevel = 3)
+                        : base(enemyAI, stateLevel)
     {
 
     }
@@ -304,13 +288,85 @@ public class HealingState : BaseState
         base.Exit();
     }
 
-    public override bool isCanExit()
+    public override bool isCanExit(int nextStateLevel = 100)
     {
-        return true;
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
+        return false;
     }
 
     public override void IUpdate()
     {
 
+    }
+}
+
+//围剿状态6
+public class SurroundState : BaseState
+{
+    Army target;
+
+    public SurroundState(EnemyAI enemyAI, Army target, int stateLevel = 6)
+                        : base(enemyAI, stateLevel)
+    {
+        this.target = target;
+    }
+    public override void Enter()
+    {
+        
+    }
+    public override void Exit()
+    {
+        base.Exit();
+        enemyAI.ExecuteBehaviour(EnemyArmyBehavior.attack);
+    }
+
+    public override bool isCanExit(int nextStateLevel = 100)
+    {
+        if(nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel))return true;
+        return Vector3.Distance(aiStateMachine.transform.position, target.transform.position) < aiStateMachine.config.minDis;
+    }
+
+    public override void IUpdate()
+    {
+        if(isCanExit())
+        {
+            Exit();
+        }
+    }
+}
+
+//支援状态6
+public class SupportState:BaseState
+{
+    Army supportTarget;
+    public SupportState(EnemyAI enemyAI, Army supportTarget, int stateLevel = 6)
+                        : base(enemyAI, stateLevel)
+    {
+        this.supportTarget = supportTarget;
+    }
+    public override void Enter()
+    {
+
+    }
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
+    public override bool isCanExit(int nextStateLevel = 100)
+    {
+        if (nextStateLevel != 100)
+            if (base.isCanExit(nextStateLevel)) return true;
+        return Vector3.Distance(aiStateMachine.transform.position, supportTarget.transform.position) < aiStateMachine.config.minDis;
+    }
+
+    public override void IUpdate()
+    {
+        if (isCanExit())
+        {
+            Exit();
+        }
     }
 }

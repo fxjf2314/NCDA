@@ -5,6 +5,21 @@ using UnityEngine.EventSystems;
 
 public class AmBushChoose : ChooseCard
 {
+    private static AmBushChoose instance;
+
+    public static AmBushChoose MyInstance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<AmBushChoose>();
+            }
+            return instance;
+        }
+
+    }
+
     public override void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
@@ -15,12 +30,7 @@ public class AmBushChoose : ChooseCard
         {
             if (isChoose)
             {
-                CardManager.MyInstance.isAmBush = false;
-                IsCardChosen();
-                isChoose = false;
-                StartCoroutine(MoveUI(-20));
-                PlaneMaskOpenAndClose();
-                card.Hide();
+                Hide();
             }
 
         }
@@ -44,5 +54,15 @@ public class AmBushChoose : ChooseCard
         }
         
 
+    }
+
+    public void Hide()
+    {
+        CardManager.MyInstance.isAmBush = false;
+        IsCardChosen();
+        isChoose = false;
+        StartCoroutine(MoveUI(-20));
+        PlaneMaskOpenAndClose();
+        card.Hide();
     }
 }

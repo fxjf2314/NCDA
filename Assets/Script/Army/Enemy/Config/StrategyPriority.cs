@@ -9,16 +9,18 @@ using static UnityEditor.Progress;
 //决策优先级计算函数类
 public class StrategyPriority
 {
+    private EnemyAI enemyAI;
     private EnemyAIConfig AIConfig;
     private EnemyContext context;
 
     SerializableDictionaryBase<string, float> ArmyDetail = new SerializableDictionaryBase<string, float>();
 
-    public StrategyPriority(EnemyAIConfig aIConfig, SerializableDictionaryBase<string, float> ArmyDetail, EnemyContext context)
+    public StrategyPriority(EnemyAIConfig AIConfig, SerializableDictionaryBase<string, float> ArmyDetail, EnemyContext context, EnemyAI enemyAI)
     {
-        AIConfig = aIConfig;
+        this.AIConfig = AIConfig;
         this.ArmyDetail = ArmyDetail;
         this.context = context;
+        this.enemyAI = enemyAI;
     }
 
     //敌军单个部队有以下几种动作，移动到城镇，撤退，前进，原地待机，守城，追击红军，回血
@@ -30,8 +32,8 @@ public class StrategyPriority
             return -100f;
         }
         float priority;
-        priority = (float)(AIConfig.deffence * 
-            (-Vector3.Distance(context.transform.position, context.GetNearestCity()) / AIConfig.checkRadius + AIConfig.checkRadius));
+        priority = (float)(2*AIConfig.deffence * 
+            (Vector3.Distance(context.transform.position, context.GetNearestCity()) / AIConfig.checkRadius));
         return priority;
     }
 
@@ -39,16 +41,18 @@ public class StrategyPriority
     {
         if(context.playerArmy.Count == 0)return -100f;
         float priority;
-        priority = AIConfig.move * ((context.playerAttack - context.enemyAttack) / 1000) % 100;
+        priority = AIConfig.attack * Math.Clamp((context.playerAttack * 0.9f - context.enemyAttack) ,-1000,1000)/1000+ 
+            AIConfig.deffence * (1 - enemyAI.GetPeople()/enemyAI.GetPeopleLimit());
         return priority;
     }
 
-    //暂定（可能改动为根据敌我城镇来移动）
+    //占领玩家城市
     public float MoveForward()
     {
         //if(context.playerArmy.Count == 0)return 0f;
         float priority;
-        priority = AIConfig.move * ((context.enemyAttack - context.playerAttack) / 1000) % 100;
+        priority = AIConfig.attack * Math.Clamp((context.enemyAttack - context.playerAttack),-1000,1000)/1000+
+            + AIConfig.attack * (Math.Clamp(Vector3.Distance(enemyAI.transform.position, EnemyAIManager.Instance.FindNearestCity(enemyAI).transform.position),0,100)/100);
         return priority;
     }
 
@@ -56,17 +60,8 @@ public class StrategyPriority
     {
         if (context.playerArmy.Count == 0) return -100f;
         float priority;
-        priority = (float)(AIConfig.move * (context.playerAttack - context.enemyAttack * 0.75) % 10 *
-            (-Vector3.Distance(context.transform.position, context.GetNearestPlayerArmy().transform.position) / AIConfig.checkRadius + AIConfig.checkRadius));
-        return priority;
-    }
-
-    public float StayInCity()
-    {
-        if (context.nearCitys.Count == 0) return -100;
-        AIConfig.deffence = (-Vector3.Distance(context.transform.position, context.GetNearestCity()) / AIConfig.checkRadius + AIConfig.checkRadius);
-        float priority;
-        priority = AIConfig.deffence * ((context.enemyAttack - context.playerAttack) / 1000) % 100;
+        priority = (float)(AIConfig.deffence * Math.Clamp((context.playerAttack - context.enemyAttack * 0.75),-1000,1000)/1000 + AIConfig.deffence *
+            (Vector3.Distance(context.transform.position, context.GetNearestPlayerArmy().transform.position) / AIConfig.checkRadius));
         return priority;
     }
 
@@ -74,8 +69,9 @@ public class StrategyPriority
     {
         if (context.playerArmy.Count == 0) return -100f;
         float priority;
-        priority = AIConfig.attack * (context.enemyAttack - context.playerAttack) * 
-            (ArmyDetail["velocity"] - context.GetNearestPlayerArmy().GetVelocity() / 2);
+        priority = AIConfig.attack * Math.Clamp((context.enemyAttack - context.playerAttack),-1000,1000)/1000 + 
+            AIConfig.attack * Math.Clamp(Vector3.Distance(context.transform.position, context.GetNearestPlayerArmy().transform.position),0,100)/100;
+        //如果有军委总队增加概率
         return priority;
     }
 
@@ -83,8 +79,17 @@ public class StrategyPriority
     {
         if (context.nearCitys.Count == 0) return (1 - ArmyDetail["people"] / ArmyDetail["peopleLimit"]) *100;
         float priority;
-        priority = ((1 - ArmyDetail["people"] / ArmyDetail["peopleLimit"])) * 100 + 
-            Vector3.Distance(context.GetNearestPlayerArmy().transform.position, context.transform.position) % 100;
+        priority = ((1 - enemyAI.GetPeople() / enemyAI.GetPeopleLimit())) * AIConfig.deffence + 
+            AIConfig.deffence * Math.Clamp(Vector3.Distance(context.GetNearestPlayerArmy().transform.position, context.transform.position),0,100)/100 ;
+        return priority;
+    }
+
+    public float NeedSupport()
+    {
+        float priority = 0;
+        List<EnemyAI> nearEnemy = EnemyAIManager.Instance.FindNearestEnemyArmy(enemyAI);
+        priority = AIConfig.attack * Math.Clamp(Vector3.Distance(context.transform.position, nearEnemy[0].transform.position), 0, 500) / 500 +
+            AIConfig.attack * Math.Clamp((context.playerAttack - context.enemyAttack), 0, 1000) / 1000;
         return priority;
     }
 
@@ -98,9 +103,9 @@ public class StrategyPriority
         prioritys[(int)EnemyArmyBehavior.retreat] = ReTreat();
         prioritys[(int)EnemyArmyBehavior.moveForward] = MoveForward();
         prioritys[(int)EnemyArmyBehavior.station] = Station();
-        prioritys[(int)EnemyArmyBehavior.stayInCity] = StayInCity();
         prioritys[(int)EnemyArmyBehavior.attack] = Attack();
         prioritys[(int)EnemyArmyBehavior.healing] = Healing();
+        prioritys[(int)EnemyArmyBehavior.needsupport] = NeedSupport();
         float max = prioritys[0];
         EnemyArmyBehavior index = 0;
         //找到优先级最大的然后执行

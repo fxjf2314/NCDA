@@ -16,9 +16,9 @@ public enum EnemyArmyBehavior
     retreat,
     moveForward,
     station,
-    stayInCity,
     attack,
-    healing
+    healing,
+    needsupport
 }
 
 [RequireComponent(typeof(EnemyAIStateMachine))]
@@ -32,13 +32,13 @@ public class EnemyAI : Army
     //血量上限
     [SerializeField] int peopleLimit;
     //环境感知脚本
-    EnemyContext context;
+    [HideInInspector]public EnemyContext context;
     //决策行为优先级计算类
     StrategyPriority strategyPriority;
     //ai行动脚本
     EnemyBehaviours behaviours;
     //ai状态机
-    EnemyAIStateMachine aism;
+    [HideInInspector]public EnemyAIStateMachine aism;
     //移动目标
     Vector3 currentGoal;
     Transform goalTransform;
@@ -46,7 +46,8 @@ public class EnemyAI : Army
 
     [SerializeField] EnemyAIConfig AIConfig;
     private float time;//计时器
-    private Dictionary<EnemyArmyBehavior, Action> behaviorDic;//状态切换字典
+    private Dictionary<EnemyArmyBehavior, Action> defaultBehaviorDic;//状态切换字典(默认指令等级)
+    private Dictionary<EnemyArmyBehavior, Action<int>> behaviorDic;//状态切换字典(可调指令等级)
 
     protected void Start()
     {
@@ -55,45 +56,69 @@ public class EnemyAI : Army
         agent.isStopped = true;
         context = GetComponent<EnemyContext>();
         behaviours = GetComponent<EnemyBehaviours>();
-        behaviours.InitBehaviours(agent, context, AIConfig, ArmyDetail);
+        behaviours.InitBehaviours(this,agent, context, AIConfig, ArmyDetail);
         aism = GetComponent<EnemyAIStateMachine>();
         aism.InitEnemyAIStateMachine(AIConfig, behaviours);
-        strategyPriority = new StrategyPriority(AIConfig, ArmyDetail, context);
+        strategyPriority = new StrategyPriority(AIConfig, ArmyDetail, context, this);
         InitBehaviorDic();
     }
 
     //初始化状态切换字典
     private void InitBehaviorDic()
     {
-        behaviorDic = new Dictionary<EnemyArmyBehavior, Action>
+        behaviorDic = new Dictionary<EnemyArmyBehavior, Action<int>>
         {
             {
                 EnemyArmyBehavior.moveToCity,
-                ()=>{ aism.ChangeState(new MoveToCityState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new MoveToCityState(this,agent, context, ref aism, stateLevel)); }
             },
             {
                 EnemyArmyBehavior.retreat,
-                ()=>{ aism.ChangeState(new RetreatState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new RetreatState(this,agent, context, ref aism, stateLevel)); }
             },
             {
                 EnemyArmyBehavior.moveForward,
-                ()=>{ aism.ChangeState(new MoveForwardState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new MoveForwardState(this, agent, context, ref aism, stateLevel)); }
             },
             {
                 EnemyArmyBehavior.station,
-                ()=>{ aism.ChangeState(new StationState(agent, context, ref aism)); }
-            },
-            {
-                EnemyArmyBehavior.stayInCity,
-                ()=>{ aism.ChangeState(new StayInCityState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new StationState(this, agent, context, ref aism, stateLevel)); }
             },
             {
                 EnemyArmyBehavior.attack,
-                ()=>{ aism.ChangeState(new AttackState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new AttackState(this, agent, context, ref aism, stateLevel)); }
             },
             {
                 EnemyArmyBehavior.healing,
-                ()=>{ aism.ChangeState(new HealingState(agent, context, ref aism)); }
+                (stateLevel)=>{ aism.ChangeState(new HealingState(this, agent, context, ref aism, stateLevel)); }
+            }
+        };
+
+        defaultBehaviorDic = new Dictionary<EnemyArmyBehavior, Action>
+        {
+            {
+                EnemyArmyBehavior.moveToCity,
+                ()=>{ aism.ChangeState(new MoveToCityState(this,agent, context, ref aism)); }
+            },
+            {
+                EnemyArmyBehavior.retreat,
+                ()=>{ aism.ChangeState(new RetreatState(this,agent, context, ref aism)); }
+            },
+            {
+                EnemyArmyBehavior.moveForward,
+                ()=>{ aism.ChangeState(new MoveForwardState(this, agent, context, ref aism)); }
+            },
+            {
+                EnemyArmyBehavior.station,
+                ()=>{ aism.ChangeState(new StationState(this, agent, context, ref aism)); }
+            },
+            {
+                EnemyArmyBehavior.attack,
+                ()=>{ aism.ChangeState(new AttackState(this, agent, context, ref aism)); }
+            },
+            {
+                EnemyArmyBehavior.healing,
+                ()=>{ aism.ChangeState(new HealingState(this, agent, context, ref aism)); }
             }
         };
     }
@@ -186,24 +211,59 @@ public class EnemyAI : Army
         }
     }
 
+    #region 设置agent的destination和停止移动
     public void SetMoveGoal(Transform transform)
     {
+        agent.isStopped = false;
         goalTransform = transform;
+        agent.SetDestination(transform.position);
     }
 
     public void SetMoveGoal(Vector3 goal)
     {
+        agent.isStopped = false;
         currentGoal = goal;
+        agent.SetDestination(goal);
     }
 
+    public void StopMove()
+    {
+        goalTransform = null;
+        currentGoal = Vector3.zero;
+        agent.isStopped = true;
+    }
+    #endregion
+
+    #region 外部调用封装
+    //获取人口上限
     public float GetPeopleLimit()
     {
         return peopleLimit;
     }
 
+    //在外部更改状态，不传stateLevel时采用各个状态默认等级
+    public void ExecuteBehaviour(EnemyArmyBehavior enemyArmyBehavior, int stateLevel = 100)
+    {
+        if(stateLevel == 100)
+        {
+            defaultBehaviorDic[enemyArmyBehavior]();
+        }
+        else
+        {
+            behaviorDic[enemyArmyBehavior](stateLevel);
+        }
+    }
+
+    #endregion
+
     protected void ChooseBehaviour()
     {
-        behaviorDic[strategyPriority.CaculatePriority()]();
+        EnemyArmyBehavior priority = strategyPriority.CaculatePriority();
+        if(priority == EnemyArmyBehavior.needsupport)
+        {
+
+        }
+        defaultBehaviorDic[strategyPriority.CaculatePriority()]();
     }
 
     protected void UpdateState()

@@ -3,18 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class EnemyContext: MonoBehaviour
+public class EnemyContext : MonoBehaviour
 {
     //附近城市
     public List<Vector3> nearCitys = new List<Vector3>();
 
     //附近敌方军队
     public List<Army> enemys = new List<Army>();
-    public float enemyAttack = 0;
+    public float enemyAttack
+    {
+        get 
+        {
+            float attack = 0;
+            for (int i = 0; i < enemys.Count; i++)
+            {
+                attack += enemys[i].GetStrength() * enemys[i].GetPeople();
+            }
+            return attack;
+        }
+        set
+        {
+            enemyAttack = value;
+        }
+    }
     //附近玩家军队
     public List<Army> playerArmy = new List<Army>();
-    public float playerAttack = 0;
-    //玩家军队最后出现位置
+    public float playerAttack
+    {
+        get
+        {
+            float attack = 0;
+            for (int i = 0; i < enemys.Count; i++)
+            {
+                attack += playerArmy[i].GetStrength() * playerArmy[i].GetPeople();
+            }
+            return attack;
+        }
+        set
+        {
+            enemyAttack = value;
+        }
+    }
+
+
 
     #region city、enemy和player增减
     public void AddCity(Vector3 city)
@@ -30,33 +61,33 @@ public class EnemyContext: MonoBehaviour
     public void AddEnemy(Army army)
     {
         enemys.Add(army);
-        enemyAttack += army.GetPeople() * army.GetStrength();
+        //enemyAttack += army.GetPeople() * army.GetStrength();
     }
 
     public void RemoveEnemy(Army army)
     {
         enemys.Remove(army);
-        enemyAttack -= army.GetPeople() * army.GetStrength();
-        if (enemyAttack < 0)
-        {
-            enemyAttack = 0;
-        }
+        //enemyAttack -= army.GetPeople() * army.GetStrength();
+        //if (enemyAttack < 0)
+        //{
+        //    enemyAttack = 0;
+        //}
     }
 
     public void AddPlayerArmy(Army army)
     {
         playerArmy.Add(army);
-        playerAttack += army.GetPeople() * army.GetStrength();
+        //playerAttack += army.GetPeople() * army.GetStrength();
     }
 
     public void RemovePlayerArmy(Army army)
     {
         playerArmy.Remove(army);
-        playerAttack -= army.GetPeople() * army.GetStrength();
-        if (playerAttack < 0)
-        {
-            playerAttack = 0;
-        }
+        //playerAttack -= army.GetPeople() * army.GetStrength();
+        //if (playerAttack < 0)
+        //{
+        //    playerAttack = 0;
+        //}
     }
     #endregion
 

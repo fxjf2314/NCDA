@@ -7,6 +7,6 @@ public interface IEnemyState
 {
     void Enter();
     void IUpdate();
-    bool isCanExit();
+    bool isCanExit(int nextStateLevel);
     void Exit();
 }

@@ -8,6 +8,7 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 [HideInInspector]
 public class EnemyBehaviours : MonoBehaviour
 {
+    private EnemyAI enemyAI;
     private NavMeshAgent agent;
     private EnemyContext context;
     private EnemyAIConfig AIConfig;
@@ -15,16 +16,18 @@ public class EnemyBehaviours : MonoBehaviour
 
     public Coroutine healing, attack;
 
-    public EnemyBehaviours(NavMeshAgent agent, EnemyContext context, EnemyAIConfig config, ref SerializableDictionaryBase<string, float> EnemyArmyDetail)
+    public EnemyBehaviours(EnemyAI enemyAI,NavMeshAgent agent, EnemyContext context, EnemyAIConfig config, ref SerializableDictionaryBase<string, float> EnemyArmyDetail)
     {
+        this.enemyAI = enemyAI;
         this.agent = agent;
         this.context = context;  
         this.AIConfig = config;
         this.EnemyArmyDetail = EnemyArmyDetail;
     }
 
-    public void InitBehaviours(NavMeshAgent agent, EnemyContext context, EnemyAIConfig config, SerializableDictionaryBase<string, float> EnemyArmyDetail)
+    public void InitBehaviours(EnemyAI enemyAI,NavMeshAgent agent, EnemyContext context, EnemyAIConfig config, SerializableDictionaryBase<string, float> EnemyArmyDetail)
     {
+        this.enemyAI = enemyAI;
         this.agent = agent;
         this.context = context;
         this.AIConfig = config;
@@ -36,22 +39,20 @@ public class EnemyBehaviours : MonoBehaviour
     {
         NavMeshHit hit = new NavMeshHit();
         NavMesh.SamplePosition(position, out hit, 10f, NavMesh.AllAreas);
-        agent.isStopped = false;
-        agent.SetDestination(position);
+        enemyAI.SetMoveGoal(position);
     }
 
     //朝着反方向撤退(慌不择路)
     public void Retreat()
     {
         //Debug.Log("retreat");
-        agent.isStopped = false;
-        Army enemy = context.GetNearestEnemyArmy();
-        if (enemy != null)
-        {
-            agent.SetDestination(enemy.transform.position);
-        }
-        else
-        {
+        //Army enemy = context.GetNearestEnemyArmy();
+        //if (enemy != null )
+        //{
+        //    enemyAI.SetMoveGoal(enemy.transform);
+        //}
+        //else
+        //{
             List<Vector3> path = GeometryUtils.CalculateReTreatPath(transform, context.playerArmy.ToArray());
             Queue<Vector3> navPath = new Queue<Vector3>();
             for (int i = 0; i < path.Count; i++)
@@ -70,33 +71,29 @@ public class EnemyBehaviours : MonoBehaviour
                     yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, vector3) <= AIConfig.minDis);
                 }
             }
-        }
+        //}
     }
 
     public void MoveToCity()
     {
         Debug.Log("move to city");
         Vector3 city = context.GetNearestCity();
-        agent.isStopped = false;
         MoveDirectly(city);
     }
     
-    //前进（未完成）
-    public void MoveForward()
+    //前进,攻占玩家方城市
+    public City MoveForward()
     {
         Debug.Log("moveforward");
+        City playerCity = EnemyAIManager.Instance.FindNearestCity(enemyAI);
+        enemyAI.SetMoveGoal(playerCity.transform);
+        return playerCity;
     }
 
     public void Station()
     {
         Debug.Log("station");
-        agent.isStopped = true;
-    }
-
-    public void StayInCity()
-    {
-        Debug.Log("stay in city");
-        agent.isStopped = true;
+        enemyAI.StopMove();
     }
 
     public void Attack()
@@ -104,8 +101,7 @@ public class EnemyBehaviours : MonoBehaviour
         Debug.Log("attack");
         //先过去
         Army player = context.GetNearestPlayerArmy();
-        agent.isStopped = false;
-        agent.SetDestination(player.transform.position);
+        enemyAI.SetMoveGoal(player.transform);
         //攻击
         attack = StartCoroutine(AttackPlayer());
         IEnumerator AttackPlayer()
@@ -132,11 +128,13 @@ public class EnemyBehaviours : MonoBehaviour
     public void StopAttack()
     {
         StopCoroutine(attack);
+        enemyAI.StopMove();
     }
 
     public void Healing()
     {
         Debug.Log("治疗");
+        enemyAI.StopMove();
         this.healing = StartCoroutine(healing());
         IEnumerator healing()
         {

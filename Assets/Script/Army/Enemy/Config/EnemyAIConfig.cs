@@ -18,8 +18,8 @@ public class EnemyAIConfig : ScriptableObject
     //[SerializeField] float healCooldown = 10f;     // ÖÎÁÆÀäÈ´Ê±¼ä
 
     [Header("ÒÆ¶¯,¹¥»÷,×¤Ôú,·ÀÓù")]
-    [SerializeField] float oMove, oAttack, oStation, oDefence;
-    public float move = 4, attack = 2, station = 3, deffence = 2.5f;
+    [SerializeField] float oMove = 4, oAttack = 2, oStation = 3, oDefence = 2.5f;
+    [HideInInspector]public float move = 4, attack = 2, station = 3, deffence = 2.5f;
 
     public int healingSpeed = 10;
 }

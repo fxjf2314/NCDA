@@ -111,7 +111,15 @@ public static class GeometryUtils
             playerCenter += player.transform.position;
         }
         playerCenter /= players.Length;
-
+        //考虑players为空的情况
+        if(playerCenter == Vector3.zero)
+        {
+            foreach (var player in EnemyAIManager.Instance.allPlayerArmys)
+            {
+                playerCenter += player.transform.position;
+            }
+            playerCenter /= players.Length;
+        }
         Vector3 dir = enemy.position - playerCenter;
         Vector3 finalPosition = enemy.position + dir;
         List<Vector3> points = new List<Vector3>();
