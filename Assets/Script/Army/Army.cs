@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RotaryHeart.Lib.SerializableDictionary;
 using Unity.VisualScripting;
+using UnityEngine.AI;
 
 public class Army : MonoBehaviour
 {
@@ -32,33 +33,39 @@ public class Army : MonoBehaviour
         return ArmyDetail["velocity"];
     }
 
-    public void ControlResource(float duration, string name, float deltaNum, float intervalTime)
+    public Coroutine ControlResource(float duration, string name, float deltaNum, float intervalTime)
     {
-        StartCoroutine(AllControl(duration, name, deltaNum, intervalTime));
+        Coroutine task = StartCoroutine(AllControl(duration, name, deltaNum, intervalTime));
+        return task;
     }
 
-    private IEnumerator AllControl(float duration, string name, float deltaNum,float intervalTime)
+    private IEnumerator AllControl(float duration, string name, float deltaNum, float intervalTime)
     {
         initNum = ArmyDetail[name];
 
         float elapsedTime = 0.0f;
-        float targetNum = initNum + deltaNum;
 
         while (elapsedTime < duration)
         {
-            ArmyDetail[name] = Mathf.Lerp(initNum, targetNum, elapsedTime / duration);
+            ArmyDetail[name] += deltaNum * (intervalTime / duration);
             yield return new WaitForSeconds(intervalTime);
             elapsedTime += intervalTime;
-            
+
         }
 
-        ArmyDetail[name] = targetNum;
+
         if (ArmyDetail["people"] == 0)
             Destroy(gameObject);
     }
+
     public void BeAttacked(float Num)
     {
         float extraNum = gameObject.GetComponent<TerrainInteraction>().exNum_Attack;
-        StartCoroutine(AllControl(0.1f, "people",- ( Num + extraNum ), 0.1f));
+        StartCoroutine(AllControl(0.1f, "people", -(Num + extraNum), 0.1f));
+    }
+
+    public void CoverToDefaultStrength(float defaultNum)
+    {
+        StartCoroutine(AllControl(3f, "strength", (defaultNum - ArmyDetail["strength"]), 0.4f));
     }
 }

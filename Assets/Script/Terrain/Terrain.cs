@@ -10,8 +10,9 @@ public class Terrain : ScriptableObject
 
     public void Use(GameObject army)
     {
+        Debug.Log($"进入地形: {type}");
         TerrainInteraction terrainInteraction = army.GetComponent<TerrainInteraction>();
-        Army armyDetail = army.GetComponent<Army>();
+        MyArmy armyDetail = army.GetComponent<MyArmy>();
         
         extraValue.Use(terrainInteraction);
         foreach (ChangeVaule changeVaule in changeVaule)
@@ -21,8 +22,9 @@ public class Terrain : ScriptableObject
     }
     public void Exit(GameObject army)
     {
+        Debug.Log($"离开地形: {type}");
         TerrainInteraction terrainInteraction = army.GetComponent<TerrainInteraction>();
-        Army armyDetail = army.GetComponent<Army>();
+        MyArmy armyDetail = army.GetComponent<MyArmy>();
         extraValue.Exit(terrainInteraction);
         foreach (ChangeVaule changeVaule in changeVaule)
         {
@@ -64,21 +66,21 @@ public class ChangeVaule
     private float deltaNum;
     [SerializeField]
     private float intervalTime;
-    public void Use(Army army)
+    public void Use(MyArmy army)
     {
         if (val == "strength" && deltaNum == 0)
         {
-            //恢复至默认值
+            if (army.GetStrength() < army.defaultStrength)
+                army.ControlResource(duration, val, army.defaultStrength - army.GetStrength(), intervalTime);
         }
-        else 
+        else
         {
 
             army.ControlResource(0.01f, val, deltaNum, 0.01f);
-
         }
     }
-    public void Exit(Army army)
+    public void Exit(MyArmy army)
     {
         army.ControlResource(duration, val, -deltaNum, intervalTime);
     }
- }
+}

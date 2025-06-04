@@ -30,5 +30,8 @@ public class CardManager : MonoBehaviour
     public bool isAmBush;
 
     public bool isFeignAttack;
-    
+
+    public float forcedMarchSpeed;
+
+    public float forcedMarchStrength;
 }

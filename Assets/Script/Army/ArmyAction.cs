@@ -44,7 +44,8 @@ public class ArmyAction : MonoBehaviour
             if(armOver)
             {
                 Debug.Log("取消布防");
-                army.ControlResource(0f, "strength", -LayOutADefense.Instance.Strength, 0f);
+                army.ControlResource(0.1f, "strength", -LayOutADefense.Instance.Strength - 
+                    GetComponent<TerrainInteraction>().exNum_Def ,0.1f);
                 armOver = false;
             }
         } 
@@ -75,7 +76,7 @@ public class ArmyAction : MonoBehaviour
                 if (armOver)
                 {
                     Debug.Log("取消布防");
-                    army.ControlResource(0f, "strength", -strength, 0f);
+                    army.ControlResource(0.1f, "strength", -strength, 0.1f);
                     armOver = false;
                 }
                 yield break;
@@ -83,7 +84,7 @@ public class ArmyAction : MonoBehaviour
             elapsedTime += Time.deltaTime;
             Debug.Log("正在布防");
         }
-        army.ControlResource(0f, "strength", strength, 0f);
+        army.ControlResource(0.1f, "strength", strength, 0.1f);
         Debug.Log("布防成功" + name + army.ArmyDetail["strength"]);
         armOver = true;
         yield return null;

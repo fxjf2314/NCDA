@@ -16,9 +16,10 @@ public class ArmyMovement : MonoBehaviour
     private Button aYesButton;
     private Button aNoButton;
     private NavMeshAgent agent; // 导航代理
-    private NavMeshPath path;
+    public NavMeshPath path;
     private bool canMove;
     public MoveToOthers moveToOthers;
+    private bool destinationReached;
 
     void Start()
     {
@@ -35,6 +36,18 @@ public class ArmyMovement : MonoBehaviour
 
     void Update()
     {
+        void Update()
+        {
+            if (agent.pathPending) return; // 路径计算中
+
+            // 到达条件检测
+            if (!destinationReached &&
+                agent.remainingDistance <= 4f &&
+                agent.velocity.sqrMagnitude == 0f)
+            {
+                OnDestinationReached();
+            }
+        }
         if (Input.GetMouseButtonDown(0)) // 检测鼠标点击
         {
             Action action;
@@ -125,10 +138,21 @@ public class ArmyMovement : MonoBehaviour
             }
         }
     }
+    private void OnDestinationReached()
+    {
+        destinationReached = true;
+
+        // 这里添加到达后的逻辑
+        agent.ResetPath(); // 清除当前路径
+    }
+
     public void ArmyMove()
     {
-        if(canMove)
+        if (canMove)
+        {
             agent.SetPath(path);
+            destinationReached = false; 
+        }
     }
     public void CancelMove()
     {
