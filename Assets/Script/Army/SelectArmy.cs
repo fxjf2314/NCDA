@@ -205,6 +205,7 @@ public class SelectArmy : MonoBehaviour
         {
             SelectedArmy.GetComponent<ArmyMovement>().enabled = state;
             SelectedArmy.GetComponent<Outline>().enabled = state;
+            armyPanel.transform.position= new Vector3(SelectedArmy.transform.position.x - 2.5f, SelectedArmy.transform.position.y, SelectedArmy.transform.position.z + 0f);
             armyPanel.SetActive(state);
             LayOutADefense.Instance.SetButton(!SelectedArmy.GetComponent<ArmyAction>().isArming);
         }
