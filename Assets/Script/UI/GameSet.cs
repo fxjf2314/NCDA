@@ -3,43 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class GameSet:MonoBehaviour
+public static class GameSet
 {
-    private static GameSet instance;
-    public static GameSet Instance
-    {
-        get
-        {
-            if(instance == null)
-            {
-                instance = FindObjectOfType<GameSet>();
-                if (instance == null) 
-                {
-                    
-                }
-            }
-            return instance;
-        }
-    }
-
-    public float volumn;
-    public bool openvolumn;
-
-
-    void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-
-    void Update()
-    {
-        if(volumn == 0)
-        {
-            openvolumn = false;
-        }
-        else
-        {
-            openvolumn=true;
-        }
-    }
+    public static float volume { get; set; }
+    public static bool openvolume {get;set;}
+    public static bool twospeed { get;set;}
 }

@@ -12,14 +12,24 @@ public class SetUI : MonoBehaviour
 
     void Start()
     {
-        GameSet.Instance.volumn = PlayerPrefs.GetFloat("Volumn", 100);
-        volumn.value=GameSet.Instance.volumn;
+        DontDestroyOnLoad(gameObject);
+        GameSet.volume = PlayerPrefs.GetFloat("Volumn", 100);
+        volumn.value=GameSet.volume;
     }
 
 
     void Update()
     {
-        if (GameSet.Instance.openvolumn)
+        if (GameSet.volume == 0)
+        {
+            GameSet.openvolume = false;
+        }
+        else
+        {
+            GameSet.openvolume = true;
+        }
+
+        if (GameSet.openvolume)
         {
             volumnon.gameObject.SetActive(true);
             volumnoff.gameObject.SetActive(false);
@@ -35,33 +45,33 @@ public class SetUI : MonoBehaviour
     {
         if (PlayerPrefs.GetFloat("Volumn", 100) != 0)
         {
-            GameSet.Instance.volumn = PlayerPrefs.GetFloat("Volumn", 100);
-            volumn.value = GameSet.Instance.volumn;
+            GameSet.volume = PlayerPrefs.GetFloat("Volumn", 100);
+            volumn.value = GameSet.volume;
         }
         else
         {
-            GameSet.Instance.volumn = 100;
+            GameSet.volume = 100;
             volumn.value = 100;
             PlayerPrefs.DeleteKey("Volumn");
-            PlayerPrefs.SetFloat("Volumn", GameSet.Instance.volumn);
+            PlayerPrefs.SetFloat("Volumn", GameSet.volume);
             PlayerPrefs.Save();
         }
     }
 
     public void Offvolumn()
     {
-        GameSet.Instance.volumn = 0;
+        GameSet.volume = 0;
         volumn.value = 0;
         PlayerPrefs.DeleteKey("Volumn");
-        PlayerPrefs.SetFloat("Volumn", GameSet.Instance.volumn);
+        PlayerPrefs.SetFloat("Volumn", GameSet.volume);
         PlayerPrefs.Save();
     }
 
     public void ChangeVolumn()
     {
-        GameSet.Instance.volumn=volumn.value;
+        GameSet.volume =volumn.value;
         PlayerPrefs.DeleteKey("Volumn");
-        PlayerPrefs.SetFloat("Volumn", GameSet.Instance.volumn);
+        PlayerPrefs.SetFloat("Volumn", GameSet.volume);
         PlayerPrefs.Save();
     }
 }
